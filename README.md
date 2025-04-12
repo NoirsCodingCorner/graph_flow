@@ -1,9 +1,9 @@
 
+
 # GraphFlow
-<p align="left">
+<p align="center">
   <img src="images/graphflow_logo.png" alt="GraphFlow Logo" width="640" />
 </p>
-
 
 GraphFlow is a powerful and flexible Flutter package for building interactive node-based editors. It provides a highly customizable canvas with support for grid backgrounds, dynamic node positioning, and a range of connection rendering styles with advanced pan & zoom functionalities. Build flowcharts, diagram editors, visual programming environments, and more – all with ease!
 
@@ -204,7 +204,7 @@ CanvasPage(
 
 - **Custom Connection Painter**  
   - Specify a custom painter via the `connectionPainter` parameter.  
-  - If not provided, the default [`ConnectionPainter`](#) is used to render connection lines.
+  - If not provided, the default `ConnectionPainter` is used to render connection lines.
 
 - **Mouse Region Callbacks**  
   - `onMouseEnter`: Triggered when the mouse enters the canvas area.  
@@ -263,21 +263,19 @@ Leverage these properties to fine-tune the visual style and interaction behavior
 
 ## Contributing
 
-Contributions are welcome! Please see our [contributing guidelines](CONTRIBUTING.md) for more information on how to get involved and submit pull requests.
+Contributions are very welcome and will be reviewed in sight!
 
 ## License
 
 GraphFlow is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-```
 
----
+## Outlook
 
-### Where to Place Images
+GraphFlow is currently fresh in development.
+If you have any comments or wishes for this library feel free to contact me over the github or just leave a note in the flutter discord channel.
 
-- **Images Folder:** Create an `images/` folder in the root of your package repository.  
-- **Image Links:** Update the image paths in the README (e.g., `images/graphflow_overview.png`) to match your folder structure.  
-- **Optimization:** Compress images appropriately for faster loading on pub.dev.
+Plans: 
+- **Data Pipes**: It is planned to add runtime data passing into the connections themselves to allow easier usage during runtime
+- **More customizable Events**: Events like creation, deletion and dragging of connections is to be made fully costumizable
 
----
-
-This README is designed to clearly communicate your package's capabilities, implementation details, and usage instructions while including visual examples and search keywords to optimize pub.dev visibility.
+Thank you all for using my library <3
