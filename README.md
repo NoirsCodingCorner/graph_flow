@@ -9,7 +9,7 @@ GraphFlow is a powerful and flexible Flutter package for building interactive no
 
 [![Pub Version](https://img.shields.io/pub/v/graph_flow)](https://pub.dev/packages/graph_flow)  
 [![Flutter Platform](https://img.shields.io/badge/Flutter-Compatible-brightgreen.svg)](https://flutter.dev)
-![GraphFlow Demo](images/ui_testarea_2025-03-10_20-21-00.gif)
+![GraphFlow Demo](images/graph_flow_pretty.PNG)
 ## Features
 
 - **Interactive Node Editor:**  
@@ -28,7 +28,7 @@ GraphFlow is a powerful and flexible Flutter package for building interactive no
   Extend the package with custom painters and node factories for bespoke node behaviors.
 
 ## Example of a customized Editor
-![GraphFlow Demo](images/graph_flow_pretty.PNG)
+![GraphFlow Demo](images/ui_testarea_2025-03-10_20-21-00.gif)
 
 ## Getting Started
 
