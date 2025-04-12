@@ -1,11 +1,11 @@
 name: graph_flow
 description: "Flutter package to enable building builders graphically."
 version: 0.1.0
-homepage:
+homepage: https://github.com/NoirsCodingCorner/graph_flow/
 
 
 environment:
-  sdk: ^3.3.0-243.0.dev
+  sdk: ^3.3.0
   flutter: ">=1.17.0"
 
 dependencies:
