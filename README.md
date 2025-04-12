@@ -1,10 +1,15 @@
+
 # GraphFlow
+<p align="left">
+  <img src="images/graphflow_logo.png" alt="GraphFlow Logo" width="640" />
+</p>
+
 
 GraphFlow is a powerful and flexible Flutter package for building interactive node-based editors. It provides a highly customizable canvas with support for grid backgrounds, dynamic node positioning, and a range of connection rendering styles with advanced pan & zoom functionalities. Build flowcharts, diagram editors, visual programming environments, and more – all with ease!
 
 [![Pub Version](https://img.shields.io/pub/v/graph_flow)](https://pub.dev/packages/graph_flow)  
 [![Flutter Platform](https://img.shields.io/badge/Flutter-Compatible-brightgreen.svg)](https://flutter.dev)
-
+![GraphFlow Demo](images/ui_testarea_2025-03-10_20-21-00.gif)
 ## Features
 
 - **Interactive Node Editor:**  
@@ -22,15 +27,8 @@ GraphFlow is a powerful and flexible Flutter package for building interactive no
 - **Easy Integration:**  
   Extend the package with custom painters and node factories for bespoke node behaviors.
 
-## Screenshots
-
-Place your images in an `images/` folder at the root of your package. Use the sample paths below to showcase GraphFlow's capabilities:
-
-![GraphFlow Overview](images/graphflow_overview.png)  
-*An overview of GraphFlow showing the grid, nodes, and connection lines.*
-
-![GraphFlow Editing Mode](images/graphflow_editing.png)  
-*The editor in action with pan, zoom, and interactive node manipulation.*
+## Example of a customized Editor
+![GraphFlow Demo](images/graph_flow_pretty.PNG)
 
 ## Getting Started
 
@@ -42,7 +40,7 @@ Add GraphFlow to your Flutter project's `pubspec.yaml` file:
 dependencies:
   flutter:
     sdk: flutter
-  graph_flow: ^0.0.1
+  graph_flow: ^0.1.0
 ```
 
 Then run:
@@ -195,13 +193,73 @@ CanvasPage(
 );
 ```
 
-## Documentation
+<h2 style="display: flex; align-items: center; gap: 8px;">
+  <img src="images/Canvas.png" alt="Canvas Icon" width="36" height="36" />
+  <span>Customizable Features of CanvasPage</span>
+  
+</h2>
 
-For detailed API documentation, visit the [API Docs](https://pub.dev/documentation/graph_flow/latest/).
+- **Manager**  
+  - The required `Manager` instance controls nodes, connection points, and overall scene state.
 
-## Keywords
+- **Custom Connection Painter**  
+  - Specify a custom painter via the `connectionPainter` parameter.  
+  - If not provided, the default [`ConnectionPainter`](#) is used to render connection lines.
 
-GraphFlow, Flutter, Node Editor, Diagram Editor, Interactive Canvas, Flowchart, Visual Programming, Custom Editor, Pan, Zoom
+- **Mouse Region Callbacks**  
+  - `onMouseEnter`: Triggered when the mouse enters the canvas area.  
+  - `onMouseHover`: Updates the manager’s mouse position and handles hover events.  
+  - `onMouseExit`: Triggered when the mouse leaves the canvas area.
+
+- **Gesture Detector Callbacks**  
+  - `onTapDown`, `onTapUp`, `onTap`: Customize how tap events are handled.  
+  - `onLongPress`: Customize long-press behavior.  
+  - `onPanStart`, `onPanUpdate`, `onPanEnd`: Handle drag (panning) events to move nodes or navigate the canvas.
+
+- **Canvas Dimensions**  
+  - `canvasWidth` & `canvasHeight`: Define the size of the canvas.
+
+- **Zoom & Pan Settings**  
+  - `maxZoom` & `minZoom`: Control the zooming capabilities of the canvas.  
+  - `scaleFactor`: Factor applied to the scaling transformation.
+
+- **Grid Settings**  
+  - `gridSpacing`: Specifies the distance between grid lines.  
+  - `lineColor`: Defines the color of the grid lines.  
+  - `lineWidth`: Sets the stroke width of the grid lines.  
+  - `overflowSpacing`: Adds extra spacing beyond the widget’s bounds to ensure complete grid coverage.
+
+
+  
+ <h2 style="display: flex; align-items: center; gap: 8px;">
+  <img src="images/ConnectPoints.png" alt="connectionIcon" width="36" height="36" />
+  <span>Customizable Features of ConnectionPainter</span>
+</h2>
+- **Mouse Line Activation:**  
+  Toggle the visibility of a dynamic connection line from the selected connection point to the current mouse position using the `mouseLineActive` flag.
+
+- **Drawing Type:**  
+  Choose from a variety of connection drawing styles via the `drawingType` parameter:
+  - `bezier` – Draw a bezier curve with vertical control points.
+  - `straightLine` – Draw a simple straight line.
+  - `verticalThenHorizontal` – Draw a line going vertically then horizontally.
+  - `halfHorizontalThenVertical` – Draw a path going half horizontally then vertically.
+  - `halfVerticalThenHorizontal` – Draw a path going half vertically then horizontally.
+  - `bezierHorizontalThenVertical` – Draw a bezier curve transitioning horizontally then vertically.
+
+- **Mouse Line Color:**  
+  Customize the color of the mouse-tracking connection line through the `mouseLineColor` property.
+
+- **Line Thickness:**  
+  Adjust the stroke width of the connection lines with the `lineThickness` setting.
+
+- **Endpoint Radius:**  
+  Specify the radius for the endpoint dots on connection points using the `endpointRadius`.
+
+Leverage these properties to fine-tune the visual style and interaction behavior of your connection lines for building highly interactive node-based editors.
+
+
+
 
 ## Contributing
 
