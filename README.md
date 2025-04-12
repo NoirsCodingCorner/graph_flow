@@ -2,7 +2,7 @@
 
 # GraphFlow
 <p align="center">
-  <img src="images/graphflow_logo.png" alt="GraphFlow Logo" width="640" />
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/graphflow_logo.png" alt="GraphFlow Logo" width="640" />
 </p>
 
 GraphFlow is a powerful and flexible Flutter package for building interactive node-based editors. It provides a highly customizable canvas with support for grid backgrounds, dynamic node positioning, and a range of connection rendering styles with advanced pan & zoom functionalities. Build flowcharts, diagram editors, visual programming environments, and more – all with ease!
@@ -12,7 +12,7 @@ GraphFlow is a powerful and flexible Flutter package for building interactive no
 
 ### Example Usecase:
 
-![GraphFlow Demo](images/graph_flow_pretty.PNG)
+![GraphFlow Demo](https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/graph_flow_pretty.PNG)
 ## Features
 
 - **Interactive Node Editor:**  
@@ -31,7 +31,7 @@ GraphFlow is a powerful and flexible Flutter package for building interactive no
   Extend the package with custom painters and node factories for bespoke node behaviors.
 
 ## Example of a customized Editor
-![GraphFlow Demo](images/ui_testarea_2025-03-10_20-21-00.gif)
+![GraphFlow Demo](https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/ui_testarea_2025-03-10_20-21-00.gif)
 
 ## Getting Started
 
@@ -197,7 +197,7 @@ CanvasPage(
 ```
 
 <h2 style="display: flex; align-items: center; gap: 8px;">
-  <img src="images/Canvas.png" alt="Canvas Icon" width="36" height="36" />
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/Canvas.png" alt="Canvas Icon" width="36" height="36" />
   <span>Customizable Features of CanvasPage</span>
   
 </h2>
@@ -235,7 +235,7 @@ CanvasPage(
 
   
  <h2 style="display: flex; align-items: center; gap: 8px;">
-  <img src="images/ConnectPoints.png" alt="connectionIcon" width="36" height="36" />
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/ConnectPoints.png" alt="connectionIcon" width="36" height="36" />
   <span>Customizable Features of ConnectionPainter</span>
 </h2>
 - **Mouse Line Activation:**  
@@ -270,7 +270,7 @@ Contributions are very welcome and will be reviewed in sight!
 
 ## License
 
-GraphFlow is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+GraphFlow is licensed under the MIT License. See the [LICENSE](https://github.com/NoirsCodingCorner/graph_flow/blob/master/LICENSE) file for details.
 
 ## Outlook
 
