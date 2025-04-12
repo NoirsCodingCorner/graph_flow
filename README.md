@@ -2,7 +2,7 @@
 
 # GraphFlow
 <p align="center">
-  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/graphflow_logo.png" alt="GraphFlow Logo" width="640" />
+  <img src=https://github.com/user-attachments/assets/c17583bc-be4e-4b3e-9002-9694068f4b1b alt="Screenshot">
 </p>
 
 GraphFlow is a powerful and flexible Flutter package for building interactive node-based editors. It provides a highly customizable canvas with support for grid backgrounds, dynamic node positioning, and a range of connection rendering styles with advanced pan & zoom functionalities. Build flowcharts, diagram editors, visual programming environments, and more – all with ease!
@@ -12,7 +12,8 @@ GraphFlow is a powerful and flexible Flutter package for building interactive no
 
 ### Example Usecase:
 
-![GraphFlow Demo](https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/graph_flow_pretty.PNG)
+![graph_flow_pretty](https://github.com/user-attachments/assets/0dc3679e-3451-4f15-b243-e3071b4d5f75)
+
 ## Features
 
 - **Interactive Node Editor:**  
@@ -31,7 +32,8 @@ GraphFlow is a powerful and flexible Flutter package for building interactive no
   Extend the package with custom painters and node factories for bespoke node behaviors.
 
 ## Example of a customized Editor
-![GraphFlow Demo](https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/ui_testarea_2025-03-10_20-21-00.gif)
+![Gifshowcase](https://github.com/user-attachments/assets/9eefc701-0c1b-4a32-93d4-1acc1d1f4a9c)
+
 
 ## Getting Started
 
@@ -195,9 +197,8 @@ CanvasPage(
   connectionPainter: MyCustomPainter(manager),
 );
 ```
-
 <h2 style="display: flex; align-items: center; gap: 8px;">
-  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/Canvas.png" alt="Canvas Icon" width="36" height="36" />
+  <img src="https://github.com/user-attachments/assets/8ade4ad5-ea95-491c-95e5-989b572a844a" alt="Canvas Icon" width="36" height="36" />
   <span>Customizable Features of CanvasPage</span>
   
 </h2>
@@ -232,10 +233,8 @@ CanvasPage(
   - `lineWidth`: Sets the stroke width of the grid lines.  
   - `overflowSpacing`: Adds extra spacing beyond the widget’s bounds to ensure complete grid coverage.
 
-
-  
  <h2 style="display: flex; align-items: center; gap: 8px;">
-  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/images/ConnectPoints.png" alt="connectionIcon" width="36" height="36" />
+  <img src="https://github.com/user-attachments/assets/26ff7125-cf7a-4a6b-8183-367b07cbe63b" alt="connectionIcon" width="36" height="36" />
   <span>Customizable Features of ConnectionPainter</span>
 </h2>
 - **Mouse Line Activation:**  
