@@ -2,7 +2,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'data_connection_painter.dart';
 
-
+/// Canvas Layout containing what visual effects and Colors shall be used.
 class CanvasLayout {
   // canvas config
   final double canvasWidth;
