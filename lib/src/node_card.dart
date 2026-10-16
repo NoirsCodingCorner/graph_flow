@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'manager.dart';
 
 /// A universally usable node card that represents a draggable widget on a canvas.
@@ -35,14 +35,13 @@ class NodeCard extends StatefulWidget {
   /// [id] must be unique.
   /// [initialPosition] sets the starting position on the canvas.
   NodeCard({
-    Key? key,
+    super.key,
     required this.manager,
     required this.builder,
     required String id,
     Offset initialPosition = Offset.zero,
   })  : position = ValueNotifier<Offset>(initialPosition),
-        id = ValueNotifier<String>(id),
-        super(key: key);
+        id = ValueNotifier<String>(id);
 
   /// Factory constructor that creates a [NodeCard] from a JSON map.
   ///

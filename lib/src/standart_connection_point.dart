@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Builds a connection point widget for the selected state.
 /// This version returns a circular widget with a blue border when selected,

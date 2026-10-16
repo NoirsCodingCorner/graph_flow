@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Extension on [Color] to provide a non-deprecated way for explicit ARGB32 conversion.
 extension ColorConversion on Color {

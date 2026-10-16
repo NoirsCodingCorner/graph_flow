@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../src/conneciton_point.dart';
 import '../src/standart_connection_point.dart';
 import 'manager.dart';
@@ -49,15 +49,11 @@ class ExampleNode extends NodeCard {
   /// [id] must be a unique identifier.
   /// [initialPosition] sets the starting canvas position (defaults to Offset.zero).
   ExampleNode({
-    Key? key,
-    required Manager manager,
-    required String id,
-    Offset initialPosition = Offset.zero,
+    super.key,
+    required super.manager,
+    required super.id,
+    super.initialPosition,
   }) : super(
-    key: key,
-    manager: manager,
-    id: id,
-    initialPosition: initialPosition,
     builder: (context, nodeCard) => exampleNodeBuilder(context, nodeCard),
   );
 

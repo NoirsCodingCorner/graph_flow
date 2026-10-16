@@ -1,0 +1,100 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="Seite-1" id="w22y0o98GpW3ayPOio80">
+    <mxGraphModel dx="1110" dy="658" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="583" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-1" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="ConnectionPoint" vertex="1">
+          <mxGeometry height="200" width="200" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-2" parent="cw94ZjK3_5Fd3fqvW2CN-1" style="rounded=0;whiteSpace=wrap;html=1;" value="NodeCard owner" vertex="1">
+          <mxGeometry height="20" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-4" parent="cw94ZjK3_5Fd3fqvW2CN-1" style="rounded=0;whiteSpace=wrap;html=1;" value="String id" vertex="1">
+          <mxGeometry height="20" width="200" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-6" parent="cw94ZjK3_5Fd3fqvW2CN-1" style="rounded=0;whiteSpace=wrap;html=1;" value="Widget Function(isSelected) cardBuilder" vertex="1">
+          <mxGeometry height="30" width="200" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-5" parent="cw94ZjK3_5Fd3fqvW2CN-1" style="rounded=0;whiteSpace=wrap;html=1;" value="getOffsetCallback" vertex="1">
+          <mxGeometry height="20" width="200" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-7" parent="cw94ZjK3_5Fd3fqvW2CN-1" style="rounded=0;whiteSpace=wrap;html=1;" value="Manager manager" vertex="1">
+          <mxGeometry height="20" width="200" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-8" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Connection" vertex="1">
+          <mxGeometry height="200" width="200" x="260" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-9" parent="cw94ZjK3_5Fd3fqvW2CN-8" style="rounded=0;whiteSpace=wrap;html=1;" value="String id1" vertex="1">
+          <mxGeometry height="20" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-10" parent="cw94ZjK3_5Fd3fqvW2CN-8" style="rounded=0;whiteSpace=wrap;html=1;" value="String id2" vertex="1">
+          <mxGeometry height="20" width="200" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-11" parent="cw94ZjK3_5Fd3fqvW2CN-8" style="rounded=0;whiteSpace=wrap;html=1;" value="fromJson" vertex="1">
+          <mxGeometry height="30" width="200" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-12" parent="cw94ZjK3_5Fd3fqvW2CN-8" style="rounded=0;whiteSpace=wrap;html=1;" value="toJson" vertex="1">
+          <mxGeometry height="20" width="200" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-13" parent="cw94ZjK3_5Fd3fqvW2CN-8" style="rounded=0;whiteSpace=wrap;html=1;" value="Color color" vertex="1">
+          <mxGeometry height="20" width="200" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-14" parent="cw94ZjK3_5Fd3fqvW2CN-8" style="rounded=0;whiteSpace=wrap;html=1;" value="== -&amp;gt; checks if both are same" vertex="1">
+          <mxGeometry height="20" width="200" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-15" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="NodeCard" vertex="1">
+          <mxGeometry height="220" width="200" x="40" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-18" parent="cw94ZjK3_5Fd3fqvW2CN-15" style="rounded=0;whiteSpace=wrap;html=1;" value="Widget Function(isSelected) cardBuilder" vertex="1">
+          <mxGeometry height="30" width="200" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-20" parent="cw94ZjK3_5Fd3fqvW2CN-15" style="rounded=0;whiteSpace=wrap;html=1;" value="Manager manager" vertex="1">
+          <mxGeometry height="20" width="200" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-22" parent="cw94ZjK3_5Fd3fqvW2CN-15" style="rounded=0;whiteSpace=wrap;html=1;" value="ValNotifier&amp;lt;Offset&amp;gt; position" vertex="1">
+          <mxGeometry height="20" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-23" parent="cw94ZjK3_5Fd3fqvW2CN-15" style="rounded=0;whiteSpace=wrap;html=1;" value="ValNotifier&amp;lt;String&amp;gt; id" vertex="1">
+          <mxGeometry height="20" width="200" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-24" parent="cw94ZjK3_5Fd3fqvW2CN-15" style="rounded=0;whiteSpace=wrap;html=1;" value="final Globalkey globalKey" vertex="1">
+          <mxGeometry height="20" width="200" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-25" parent="cw94ZjK3_5Fd3fqvW2CN-15" style="rounded=0;whiteSpace=wrap;html=1;" value="fromJson" vertex="1">
+          <mxGeometry height="30" width="200" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-26" parent="cw94ZjK3_5Fd3fqvW2CN-15" style="rounded=0;whiteSpace=wrap;html=1;" value="toJson" vertex="1">
+          <mxGeometry height="20" width="200" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-27" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Manager" vertex="1">
+          <mxGeometry height="320" width="230" x="260" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-36" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="String Function() getNewID" vertex="1">
+          <mxGeometry height="20" width="230" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-37" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="ValueNotifier&amp;lt;List&amp;lt;NodeCard&amp;gt;&amp;gt; nodes;" vertex="1">
+          <mxGeometry height="30" width="230" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-38" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="ValueNotifier&amp;lt;List&amp;lt;ConnectionPoints&amp;gt;&amp;gt; connectionPoints;" vertex="1">
+          <mxGeometry height="30" width="230" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-39" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="ValueNotifier&amp;lt;List&amp;lt;ConnectionPoints&amp;gt;&amp;gt; connectionPoints;" vertex="1">
+          <mxGeometry height="30" width="230" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-40" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="ValueNotifier&amp;lt;List&amp;lt;Connections&amp;gt;&amp;gt; connections;" vertex="1">
+          <mxGeometry height="30" width="230" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-41" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="ValueNotifier&amp;lt;Offset&amp;gt; mousePosition" vertex="1">
+          <mxGeometry height="30" width="230" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-42" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="ValueNotifier&amp;lt;Offset&amp;gt; canvasOffset" vertex="1">
+          <mxGeometry height="30" width="230" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="cw94ZjK3_5Fd3fqvW2CN-43" parent="cw94ZjK3_5Fd3fqvW2CN-27" style="rounded=0;whiteSpace=wrap;html=1;" value="ValueNotifier&amp;lt;ConnectionPoint?&amp;gt; currentlyselectedPoint" vertex="1">
+          <mxGeometry height="30" width="230" y="260" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

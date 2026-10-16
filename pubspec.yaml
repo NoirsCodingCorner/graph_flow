@@ -1,7 +1,7 @@
 name: graph_flow
 description: "Flutter package to enable building builders graphically."
-version: 0.1.1
-homepage: https://github.com/NoirsCodingCorner/graph_flow/
+version: 0.1.2
+homepage: "https://github.com/NoirsCodingCorner/graph_flow"
 
 
 environment:
@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  material_ui: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
