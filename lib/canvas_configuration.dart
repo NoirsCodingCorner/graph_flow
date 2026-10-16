@@ -2,6 +2,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'data_connection_painter.dart';
 
+/// Canvas to render new things
 class CanvasLayout {
   // canvas config
   final double canvasWidth;
