@@ -6,36 +6,26 @@ import 'package:graph_flow/graph_flow.dart';
 import 'connection_model.dart';
 
 /// The central source of truth for the graph's state and validation logic.
-class GraphManager extends ChangeNotifier {
+class GraphModel extends ChangeNotifier {
 
   /// Actual Value carriers
-  List<NodeModel> nodeModels = [];
-  List<NodeVisual> nodeVisuals = [];
+  final List<NodeModel> _nodeModels = [];
   List<ConnectionModel> connectionModels = [];
 
-  /// Visual representation of the Value Carriers
+
+
+  /// Visual representation of the nodes
+  List<NodeVisual> nodeVisuals = [];
+
+  /// Temporal UI states representation
   NodeVisual? currentlyHoveredNode;
   PortVisual? currentlySelectedPort;
+  ValueNotifier<List<NodeVisual>>selectedNodes=ValueNotifier([]);
   Offset? mousePosition;
 
-  /// Selected nodes atm
-  ValueNotifier<List<NodeVisual>>selectedNodes=ValueNotifier([]);
 
-  void updateMousePosition(Offset position) {
-    mousePosition = position;
-    notifyListeners();
-  }
-
-  /// Registers a node and its visual representation into the graph.
-  void addNode(NodeModel model, NodeVisual visual) {
-    nodeModels.add(model);
-    nodeVisuals.add(visual);
-    notifyListeners();
-  }
-
-  /// Removes a node, its visual, and destroys any associated connections.
   void removeNode(String nodeId) {
-    nodeModels.removeWhere((node) => node.id == nodeId);
+    _nodeModels.removeWhere((node) => node.id == nodeId);
     nodeVisuals.removeWhere((visual) => visual.nodeModel.id == nodeId);
 
     connectionModels.removeWhere((conn) =>
@@ -44,6 +34,22 @@ class GraphManager extends ChangeNotifier {
 
     notifyListeners();
   }
+  void addNode(NodeModel model, NodeVisual visual) {
+    _nodeModels.add(model);
+    nodeVisuals.add(visual);
+    notifyListeners();
+  }
+
+
+
+
+
+
+
+  void updateMousePosition(Offset position) {
+    mousePosition = position;
+  }
+
 
 
 
@@ -82,8 +88,8 @@ class GraphManager extends ChangeNotifier {
 
   /// Attempts to connect two ports. Returns true if successful.
   bool createConnection(String sourceNodeId, String sourcePortId, String targetNodeId, String targetPortId) {
-    NodeModel? sourceNode = nodeModels.where((n) => n.id == sourceNodeId).firstOrNull;
-    NodeModel? targetNode = nodeModels.where((n) => n.id == targetNodeId).firstOrNull;
+    NodeModel? sourceNode = _nodeModels.where((n) => n.id == sourceNodeId).firstOrNull;
+    NodeModel? targetNode = _nodeModels.where((n) => n.id == targetNodeId).firstOrNull;
 
     if (sourceNode == null || targetNode == null) return false;
 
@@ -253,5 +259,9 @@ class GraphManager extends ChangeNotifier {
     marqueeEndPosition=null;
   }
 
+
+}
+
+class GraphManagerVisual extends ChangeNotifier{
 
 }

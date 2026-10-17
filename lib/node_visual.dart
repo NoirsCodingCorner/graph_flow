@@ -4,6 +4,17 @@ import 'package:graph_flow/graph_flow.dart';
 import 'package:graph_flow/port_visual.dart';
 import 'node_model.dart';
 
+
+class NodeViewState{
+  final NodeModel model;
+  final ValueNotifier<Offset>position;
+  final ValueNotifier<Size> size=ValueNotifier(Size.zero);
+  final Map<String, PortViewState>ports;
+
+  NodeViewState(this.model, Offset start): position = ValueNotifier(start), ports = {for (final p in model.ports) p.id: PortViewState(p)};
+}
+
+
 /// A visual representation of a NodeModel that manages its own position, size, and layout.
 class NodeVisual extends StatefulWidget {
   /// The pure data model defining the node's logic.
@@ -19,10 +30,10 @@ class NodeVisual extends StatefulWidget {
   final List<PortVisual> portVisuals;
 
 
-  final GraphManager graphManager;
+  final GraphModel graphManager;
 
   /// A builder function allowing for complete UI customization.
-  final Widget Function(BuildContext context, NodeVisual visual, List<PortVisual> portVisuals, GraphManager manager) builder;
+  final Widget Function(BuildContext context, NodeVisual visual, List<PortVisual> portVisuals, GraphModel manager) builder;
 
   /// Constructs a [NodeVisual].
   NodeVisual({

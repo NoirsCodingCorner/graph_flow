@@ -10,7 +10,7 @@ enum ConnectionShape {
 
 /// A high-performance painter that draws connections and animated dots.
 class DataConnectionPainter extends CustomPainter {
-  final GraphManager manager;
+  final GraphModel manager;
   final Animation<double> animation;
 
   final Color lineColor;

@@ -4,6 +4,14 @@ import 'package:graph_flow/graph_flow.dart';
 import 'package:material_ui/material_ui.dart';
 import 'port_model.dart';
 
+class PortViewState{
+  final GlobalKey key=GlobalKey();
+  final PortModel model;
+  final ValueNotifier<Offset?>localOffset= ValueNotifier(null);
+
+  PortViewState(this.model);
+}
+
 /// A visual representation of a PortModel that tracks its local position within a NodeVisual.
 class PortVisual extends StatefulWidget {
   /// The pure data model defining the port's logic, direction, and data type.
@@ -15,7 +23,7 @@ class PortVisual extends StatefulWidget {
   /// A builder function allowing for complete UI customization of the port.
   final Widget Function(BuildContext context, PortVisual visual) builder;
 
-  final GraphManager graphManager;
+  final GraphModel graphManager;
   String parentNodeID;
 
   /// Constructs a [PortVisual].

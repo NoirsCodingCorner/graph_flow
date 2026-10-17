@@ -11,9 +11,9 @@ import 'graph_manager.dart';
 /// The main interactive canvas for the node graph.
 ///
 /// Uses an [InteractiveViewer] to handle all panning and zooming natively.
-/// Listens to the [GraphManager] to rebuild when nodes or connections are added/removed.
+/// Listens to the [GraphModel] to rebuild when nodes or connections are added/removed.
 class GraphCanvas extends StatefulWidget {
-  final GraphManager manager;
+  final GraphModel manager;
   final CanvasLayout canvasLayout;
 
 
