@@ -30,29 +30,22 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
     letterSpacing: 0.5,
   );
 
-  Widget _buildNodeUI(List<Widget> children) {
-    return Container(
-      width: 140,
-      height: 60,
-      decoration: BoxDecoration(
-        color: const Color(0xFF2B2D31),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white12, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+  Widget _buildNodeUI(List<Widget> children, GraphManager manager) {
+    return ValueListenableBuilder(
+      valueListenable: manager.selectedNodes,
+      builder: (context, value, child) {
+        return Container(
+          width: 140,
+          height: 60,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: children,
+            ),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: children,
-        ),
-      ),
+        );
+      }
     );
   }
 
@@ -83,10 +76,9 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
     NodeVisual nodeVisual = NodeVisual(
       nodeModel: nodeModel,
       initialPosition: position,
-      onNodeMoved: () => manager.notifyListeners(),
-      builder: (BuildContext context, NodeVisual visual, List<PortVisual> ports) {
+      builder: (BuildContext context, NodeVisual visual, List<PortVisual> ports, GraphManager manager) {
         // Output nodes put the text on the left and the port on the right
-        return _buildNodeUI([Text(nodeName, style: _nodeTextStyle), ports[0]]);
+        return _buildNodeUI([Text(nodeName, style: _nodeTextStyle), ports[0]],manager);
       },
       graphManager: manager,
     );
@@ -109,10 +101,9 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
     NodeVisual nodeVisual = NodeVisual(
       nodeModel: nodeModel,
       initialPosition: position,
-      onNodeMoved: () => manager.notifyListeners(),
-      builder: (BuildContext context, NodeVisual visual, List<PortVisual> ports) {
+      builder: (BuildContext context, NodeVisual visual, List<PortVisual> ports, GraphManager manager) {
         // Input nodes put the port on the left and the text on the right
-        return _buildNodeUI([ports[0], Text(nodeName, style: _nodeTextStyle)]);
+        return _buildNodeUI([ports[0], Text(nodeName, style: _nodeTextStyle)], manager);
       },
       graphManager: manager,
     );
@@ -130,12 +121,12 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
 
 // 3. Clean Setup Execution
   void _setupDemoGraph() {
-    int input=10;
+    int input=25;
     for(int i=0;i<input;i++){
       _createInputNode('node_B$i', 'Layer_0_$i', 'in_$i', Offset(1000, i*60));
     }
 
-    int output=10;
+    int output=25;
     for(int o=0;o<output;o++){
       _createOutputNode('node_A$o', 'Layer_1_$o', 'out_$o', Offset(0, o*60));
     }

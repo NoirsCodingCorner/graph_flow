@@ -97,7 +97,7 @@ class DataConnectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // --- 1. Draw established connections ---
-    List<ConnectionModel> hoveredConnections=manager.connectionsOfNode(manager.currentlyHoveredNode?.nodeModel);
+    List<ConnectionModel> hoveredConnections=manager.getConnectionsOfNode(manager.currentlyHoveredNode?.nodeModel);
     for (final connection in manager.connectionModels) {
       Offset? startOffset = manager.getAbsolutePortPosition(
           connection.sourceNodeId, connection.sourcePortId);

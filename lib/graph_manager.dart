@@ -1,4 +1,6 @@
 
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 import 'package:graph_flow/graph_flow.dart';
 import 'connection_model.dart';
@@ -6,13 +8,18 @@ import 'connection_model.dart';
 /// The central source of truth for the graph's state and validation logic.
 class GraphManager extends ChangeNotifier {
 
+  /// Actual Value carriers
   List<NodeModel> nodeModels = [];
   List<NodeVisual> nodeVisuals = [];
   List<ConnectionModel> connectionModels = [];
 
+  /// Visual representation of the Value Carriers
   NodeVisual? currentlyHoveredNode;
   PortVisual? currentlySelectedPort;
   Offset? mousePosition;
+
+  /// Selected nodes atm
+  ValueNotifier<List<NodeVisual>>selectedNodes=ValueNotifier([]);
 
   void updateMousePosition(Offset position) {
     mousePosition = position;
@@ -38,6 +45,8 @@ class GraphManager extends ChangeNotifier {
     notifyListeners();
   }
 
+
+
   void setLastNode(NodeVisual node){
     int index=nodeVisuals.indexOf(node);
 
@@ -55,17 +64,6 @@ class GraphManager extends ChangeNotifier {
     currentlyHoveredNode=null;
   }
 
-  List<ConnectionModel> connectionsOfNode(NodeModel? node){
-    if(node==null){return [];}
-    List<ConnectionModel> nodeConnections=[];
-    // Iterate over all connections
-    for(ConnectionModel connection in connectionModels){
-      if(connection.sourceNodeId==node.id || connection.targetNodeId==node.id){
-        nodeConnections.add(connection);
-      }
-    }
-    return nodeConnections;
-  }
 
   /// Validates whether two ports can logically connect based on strict rules.
   bool canConnect(PortModel source, NodeModel sourceNode, PortModel target, NodeModel targetNode) {
@@ -117,6 +115,44 @@ class GraphManager extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  List<ConnectionModel> getConnectionsOfNode(NodeModel? node){
+    if(node==null){return [];}
+    List<ConnectionModel> nodeConnections=[];
+    // Iterate over all connections
+    for(ConnectionModel connection in connectionModels){
+      if(connection.sourceNodeId==node.id || connection.targetNodeId==node.id){
+        nodeConnections.add(connection);
+      }
+    }
+    return nodeConnections;
+  }
+  NodeVisual? getNodeOfPort(PortVisual port){
+    for(NodeVisual node in nodeVisuals){
+      if(node.portVisuals.contains(port)){
+        return node;
+      }
+    }
+    return null;
+  }
+  bool deleteConnectionsOfPortVisual(PortVisual port) {
+    int initialCount = connectionModels.length;
+
+    connectionModels.removeWhere((model) =>
+    model.sourcePortId == port.portModel.id ||
+        model.targetPortId == port.portModel.id
+    );
+
+    bool connectionsDeleted = connectionModels.length < initialCount;
+
+    if (connectionsDeleted) {
+      notifyListeners();
+    }
+
+    return connectionsDeleted;
+  }
+
+
   /// Calculates the absolute canvas coordinates for a specific port.
   /// This requires zero widget-tree lookups, relying purely on the layout values
   /// cached in the Visual layers.
@@ -133,14 +169,6 @@ class GraphManager extends ChangeNotifier {
     return nodeVisual.position.value + portVisual.localOffset.value;
   }
 
-  NodeVisual? findNode(PortVisual port){
-    for(NodeVisual node in nodeVisuals){
-      if(node.portVisuals.contains(port)){
-        return node;
-      }
-    }
-    return null;
-  }
 
   void leftClicked(PortVisual clicked) {
     if (currentlySelectedPort == null) {
@@ -168,27 +196,62 @@ class GraphManager extends ChangeNotifier {
       notifyListeners();
     }
   }
-  bool deleteConnectionsOfPortVisual(PortVisual port) {
-    int initialCount = connectionModels.length;
-
-    connectionModels.removeWhere((model) =>
-    model.sourcePortId == port.portModel.id ||
-        model.targetPortId == port.portModel.id
-    );
-
-    bool connectionsDeleted = connectionModels.length < initialCount;
-
-    if (connectionsDeleted) {
-      notifyListeners();
-    }
-
-    return connectionsDeleted;
-  }
-
-
   void rightClicked(PortVisual clicked){
     currentlySelectedPort=null;
     deleteConnectionsOfPortVisual(clicked);
     notifyListeners();
   }
+
+  void nodePositionChanged(NodeVisual node, Offset delta ){
+    if(!selectedNodes.value.contains(node)){
+      selectedNodes.value=[node];
+    }
+    //node.position.value+=delta;
+
+    for(NodeVisual selNode in selectedNodes.value){
+      selNode.position.value+=delta;
+    }
+
+    notifyListeners();
+  }
+
+  // Marquee logic
+  Offset?marqueeStartPosition;
+  Offset?marqueeEndPosition;
+
+  void selectInMarquee(){
+    if(marqueeStartPosition!=null&&marqueeEndPosition!=null){
+      double lowestX= min(marqueeStartPosition!.dx, marqueeEndPosition!.dx);
+      double highestX=max(marqueeStartPosition!.dx, marqueeEndPosition!.dx);
+      double lowestY= min(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
+      double highestY=max(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
+
+      List<NodeVisual>inside=[];
+      for(NodeVisual node in nodeVisuals){
+        Offset nodePos=node.position.value;
+
+
+        if(lowestX<nodePos.dx&&nodePos.dx<highestX&&lowestY<nodePos.dy&&nodePos.dy<highestY){
+          inside.add(node);
+        }
+      }
+      selectedNodes.value=inside;
+      //print("selectedNodes: ${selectedNodes.length} in: $marqueeStartPosition x $marqueeEndPosition");
+      notifyListeners();
+    }
+  }
+
+  void startMarquee(Offset startingPosition){
+    marqueeStartPosition=startingPosition;
+  }
+  void currentMarquee(Offset endPosition){
+    marqueeEndPosition=endPosition;
+    selectInMarquee();
+  }
+  void endMarquee(){
+    marqueeStartPosition=null;
+    marqueeEndPosition=null;
+  }
+
+
 }

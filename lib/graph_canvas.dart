@@ -32,8 +32,7 @@ class _GraphCanvasState extends State<GraphCanvas>
     with SingleTickerProviderStateMixin {
 
   ValueNotifier<bool>canPan=ValueNotifier(true);
-  Offset?startMarquee;
-  Offset?currentMarquee;
+
 
   final TransformationController _transformationController =
       TransformationController();
@@ -87,22 +86,24 @@ class _GraphCanvasState extends State<GraphCanvas>
                 child: Listener(
                   onPointerDown: (details){
                     if(HardwareKeyboard.instance.isShiftPressed){
-                      startMarquee=details.localPosition;
+                      widget.manager.startMarquee(details.localPosition);
                       canPan.value=false;
                     }
                   },
                   onPointerMove: (details){
-                    currentMarquee=details.localPosition;
+                    if(HardwareKeyboard.instance.isShiftPressed){
+                      widget.manager.currentMarquee(details.localPosition);
+                      //print("${widget.manager.marqueeStartPosition} : ${widget.manager.marqueeEndPosition}");
                     setState(() {
 
-                    });
+                    });}
                   },
 
                   onPointerUp: (details){
-                    startMarquee=null;
-                    currentMarquee=null;
+                    widget.manager.endMarquee();
                     canPan.value=true;
                   },
+
                   child: MouseRegion(
                     onHover: (event) {
                       widget.manager.updateMousePosition(event.localPosition);
@@ -140,9 +141,9 @@ class _GraphCanvasState extends State<GraphCanvas>
                                   connectionShape: widget.canvasLayout.connectionConnectionShape,
                               )
                             ),),
-                          if (startMarquee != null&&currentMarquee!=null)
+                          if (widget.manager.marqueeStartPosition != null&&widget.manager.marqueeEndPosition!=null)
                             Positioned.fromRect(
-                              rect: _calculateRect(startMarquee!, currentMarquee??Offset.zero),
+                              rect: _calculateRect(widget.manager.marqueeStartPosition!, widget.manager.marqueeEndPosition??Offset.zero),
                               child: IgnorePointer(
                                 child: Container(
                                   decoration: BoxDecoration(
