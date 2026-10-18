@@ -5,101 +5,141 @@ import 'package:flutter/widgets.dart';
 import 'package:graph_flow/graph_flow.dart';
 import 'connection_model.dart';
 
-/// The central source of truth for the graph's state and validation logic.
 class GraphModel extends ChangeNotifier {
-
-  /// Actual Value carriers
-  final List<NodeModel> _nodeModels = [];
+  List<NodeModel> nodeModels = [];
   List<ConnectionModel> connectionModels = [];
 
+  Map<Type, List<Type>> allowedConnections;
 
+  GraphModel({this.allowedConnections = const {}});
 
-  /// Visual representation of the nodes
-  List<NodeVisual> nodeVisuals = [];
-
-  /// Temporal UI states representation
-  NodeVisual? currentlyHoveredNode;
-  PortVisual? currentlySelectedPort;
-  ValueNotifier<List<NodeVisual>>selectedNodes=ValueNotifier([]);
-  Offset? mousePosition;
-
-
-  void removeNode(String nodeId) {
-    _nodeModels.removeWhere((node) => node.id == nodeId);
-    nodeVisuals.removeWhere((visual) => visual.nodeModel.id == nodeId);
-
-    connectionModels.removeWhere((conn) =>
-    conn.sourceNodeId == nodeId || conn.targetNodeId == nodeId
-    );
-
-    notifyListeners();
-  }
-  void addNode(NodeModel model, NodeVisual visual) {
-    _nodeModels.add(model);
-    nodeVisuals.add(visual);
+  void addNode(NodeModel model) {
+    nodeModels.add(model);
     notifyListeners();
   }
 
-
-
-
-
-
-
-  void updateMousePosition(Offset position) {
-    mousePosition = position;
-  }
-
-
-
-
-  void setLastNode(NodeVisual node){
-    int index=nodeVisuals.indexOf(node);
-
-    if(index==-1){
-      return;
-    }
-    nodeVisuals.removeAt(index);
-    nodeVisuals.add(node);
+  void removeConnection(ConnectionModel connection) {
+    connectionModels.remove(connection);
     notifyListeners();
   }
-  void setLastHovered(NodeVisual node){
-    currentlyHoveredNode=node;
-  }
-  void removeHovered(NodeVisual node){
-    currentlyHoveredNode=null;
+
+  bool isDirectionCompatible(PortDirection dirA, PortDirection dirB) {
+    if (dirA == PortDirection.inout) { return true; }
+    if (dirB == PortDirection.inout) { return true; }
+    if (dirA == PortDirection.input && dirB == PortDirection.output) { return true; }
+    if (dirA == PortDirection.output && dirB == PortDirection.input) { return true; }
+    return false;
   }
 
-
-  /// Validates whether two ports can logically connect based on strict rules.
   bool canConnect(PortModel source, NodeModel sourceNode, PortModel target, NodeModel targetNode) {
-    if (sourceNode.id == targetNode.id) return false;
-    if (source.direction == target.direction) return false;
-    if (source.type != target.type) return false;
+    if (sourceNode.id == targetNode.id) {
+      return false;
+    }
 
-    bool exists = connectionModels.any((conn) =>
-    (conn.sourcePortId == source.id && conn.targetPortId == target.id) ||
-        (conn.sourcePortId == target.id && conn.targetPortId == source.id));
+    bool directionOk = isDirectionCompatible(source.direction, target.direction);
+    if (directionOk == false) {
+      return false;
+    }
 
-    if (exists) return false;
+    Type outType = source.type;
+    Type inType = target.type;
+
+    if (source.direction == PortDirection.input) {
+      outType = target.type;
+      inType = source.type;
+    }
+
+    bool isValidType = false;
+
+    if (source.direction == PortDirection.inout || target.direction == PortDirection.inout) {
+      List<Type>? sourceAllowed = allowedConnections[source.type];
+      if (sourceAllowed != null) {
+        for (int i = 0; i < sourceAllowed.length; i++) {
+          if (sourceAllowed[i] == target.type) {
+            isValidType = true;
+          }
+        }
+      }
+      List<Type>? targetAllowed = allowedConnections[target.type];
+      if (targetAllowed != null) {
+        for (int i = 0; i < targetAllowed.length; i++) {
+          if (targetAllowed[i] == source.type) {
+            isValidType = true;
+          }
+        }
+      }
+    } else {
+      List<Type>? allowedTargets = allowedConnections[outType];
+      if (allowedTargets != null) {
+        for (int i = 0; i < allowedTargets.length; i++) {
+          if (allowedTargets[i] == inType) {
+            isValidType = true;
+          }
+        }
+      }
+    }
+
+    if (isValidType == false) {
+      return false;
+    }
+
+    bool exists = false;
+    for (int i = 0; i < connectionModels.length; i++) {
+      ConnectionModel conn = connectionModels[i];
+      if (conn.sourcePortId == source.id && conn.targetPortId == target.id) {
+        exists = true;
+      }
+      if (conn.sourcePortId == target.id && conn.targetPortId == source.id) {
+        exists = true;
+      }
+    }
+
+    if (exists) {
+      return false;
+    }
 
     return true;
   }
 
-  /// Attempts to connect two ports. Returns true if successful.
   bool createConnection(String sourceNodeId, String sourcePortId, String targetNodeId, String targetPortId) {
-    NodeModel? sourceNode = _nodeModels.where((n) => n.id == sourceNodeId).firstOrNull;
-    NodeModel? targetNode = _nodeModels.where((n) => n.id == targetNodeId).firstOrNull;
+    NodeModel? sourceNode;
+    for (int i = 0; i < nodeModels.length; i++) {
+      if (nodeModels[i].id == sourceNodeId) {
+        sourceNode = nodeModels[i];
+      }
+    }
 
-    if (sourceNode == null || targetNode == null) return false;
+    NodeModel? targetNode;
+    for (int i = 0; i < nodeModels.length; i++) {
+      if (nodeModels[i].id == targetNodeId) {
+        targetNode = nodeModels[i];
+      }
+    }
 
-    PortModel? sourcePort = sourceNode.ports.where((p) => p.id == sourcePortId).firstOrNull;
-    PortModel? targetPort = targetNode.ports.where((p) => p.id == targetPortId).firstOrNull;
+    if (sourceNode == null || targetNode == null) {
+      return false;
+    }
 
-    if (sourcePort == null || targetPort == null) return false;
+    PortModel? sourcePort;
+    for (int i = 0; i < sourceNode.ports.length; i++) {
+      if (sourceNode.ports[i].id == sourcePortId) {
+        sourcePort = sourceNode.ports[i];
+      }
+    }
 
-    // Validate connection
-    if (canConnect(sourcePort, sourceNode, targetPort, targetNode)) {
+    PortModel? targetPort;
+    for (int i = 0; i < targetNode.ports.length; i++) {
+      if (targetNode.ports[i].id == targetPortId) {
+        targetPort = targetNode.ports[i];
+      }
+    }
+
+    if (sourcePort == null || targetPort == null) {
+      return false;
+    }
+
+    bool valid = canConnect(sourcePort, sourceNode, targetPort, targetNode);
+    if (valid) {
       ConnectionModel newConnection = ConnectionModel(
         sourceNodeId: sourceNodeId,
         sourcePortId: sourcePortId,
@@ -108,46 +148,24 @@ class GraphModel extends ChangeNotifier {
       );
 
       connectionModels.add(newConnection);
-      notifyListeners(); // Trigger the CustomPainter to draw the new line
+      notifyListeners();
       return true;
     }
 
     return false;
   }
 
-  /// Removes an existing connection from the graph.
-  void removeConnection(ConnectionModel connection) {
-    connectionModels.remove(connection);
-    notifyListeners();
-  }
-
-
-  List<ConnectionModel> getConnectionsOfNode(NodeModel? node){
-    if(node==null){return [];}
-    List<ConnectionModel> nodeConnections=[];
-    // Iterate over all connections
-    for(ConnectionModel connection in connectionModels){
-      if(connection.sourceNodeId==node.id || connection.targetNodeId==node.id){
-        nodeConnections.add(connection);
-      }
-    }
-    return nodeConnections;
-  }
-  NodeVisual? getNodeOfPort(PortVisual port){
-    for(NodeVisual node in nodeVisuals){
-      if(node.portVisuals.contains(port)){
-        return node;
-      }
-    }
-    return null;
-  }
-  bool deleteConnectionsOfPortVisual(PortVisual port) {
+  bool deleteConnectionsOfPortVisual(PortModel port) {
     int initialCount = connectionModels.length;
 
-    connectionModels.removeWhere((model) =>
-    model.sourcePortId == port.portModel.id ||
-        model.targetPortId == port.portModel.id
-    );
+    List<ConnectionModel> toKeep = [];
+    for (int i = 0; i < connectionModels.length; i++) {
+      ConnectionModel model = connectionModels[i];
+      if (model.sourcePortId != port.id && model.targetPortId != port.id) {
+        toKeep.add(model);
+      }
+    }
+    connectionModels = toKeep;
 
     bool connectionsDeleted = connectionModels.length < initialCount;
 
@@ -158,36 +176,94 @@ class GraphModel extends ChangeNotifier {
     return connectionsDeleted;
   }
 
+  List<ConnectionModel> getConnectionsOfNode(NodeModel? node) {
+    if (node == null) {
+      return [];
+    }
 
-  /// Calculates the absolute canvas coordinates for a specific port.
-  /// This requires zero widget-tree lookups, relying purely on the layout values
-  /// cached in the Visual layers.
-  Offset? getAbsolutePortPosition(String nodeId, String portId) {
-    // 1. Find the parent NodeVisual
-    NodeVisual? nodeVisual = nodeVisuals.where((v) => v.nodeModel.id == nodeId).firstOrNull;
-    if (nodeVisual == null) return null;
+    List<ConnectionModel> nodeConnections = [];
+    for (int i = 0; i < connectionModels.length; i++) {
+      ConnectionModel connection = connectionModels[i];
+      if (connection.sourceNodeId == node.id || connection.targetNodeId == node.id) {
+        nodeConnections.add(connection);
+      }
+    }
+    return nodeConnections;
+  }
+}
 
-    // 2. Find the specific PortVisual within the parent
-    PortVisual? portVisual = nodeVisual.portVisuals.where((pv) => pv.portModel.id == portId).firstOrNull;
-    if (portVisual == null) return null;
+class GraphVisualiser extends ChangeNotifier{
+  GraphModel model;
+  GraphVisualiser(this.model);
+  /// Visual representation of the nodes
+  Map<String,NodeViewState> nodeViewStates = {};
 
-    // 3. Absolute Position = Node Base Position + Port Local Offset
-    return nodeVisual.position.value + portVisual.localOffset.value;
+  NodeViewState? currentlyHoveredNode;
+  PortViewState? currentlySelectedPort;
+  /// Temporal UI states representation
+
+  ValueNotifier<List<NodeViewState>>selectedNodes=ValueNotifier([]);
+
+  Offset? mousePosition;
+  Offset?marqueeStartPosition;
+  Offset?marqueeEndPosition;
+
+  Map<String,Widget Function(BuildContext context, NodeViewState state, Map<String, PortVisual> ports)> nodeBuilders={};
+  Map<Type,Widget Function(BuildContext context, PortVisual visual)> portBuilders={};
+
+  Widget Function(BuildContext context, NodeViewState state, Map<String, PortVisual> ports)? getNodeBuilderByType(String typeName){
+    return nodeBuilders[typeName]!;
+  }
+  Widget Function(BuildContext context, PortVisual visual) getPortBuilderByType(Type type){
+    return portBuilders[type]!;
   }
 
 
-  void leftClicked(PortVisual clicked) {
+  void updateMousePosition(Offset position) {
+    mousePosition = position;
+    if(currentlySelectedPort!=null){
+      notifyListeners();
+    }
+  }
+
+  void setLastHovered(NodeViewState node){
+    currentlyHoveredNode=node;
+    notifyListeners();
+  }
+  void removeHovered(NodeViewState node){
+    currentlyHoveredNode=null;
+    notifyListeners();
+  }
+
+  Offset? getAbsolutePortPosition(String nodeId, String portId) {
+    // 1. Find the parent NodeViewState
+    NodeViewState? nodeViewState = nodeViewStates[nodeId];
+    if (nodeViewState == null) return null;
+
+    // 2. Look up PortViewState directly by portId in the ports map
+    PortViewState? portVisual = nodeViewState.ports[portId];
+    if (portVisual == null) return null;
+
+    // 3. Extract and verify the local offset
+    Offset? localOffset = portVisual.localOffset.value;
+    if (localOffset == null) return null;
+
+    // 4. Absolute Position = Node Base Position + Port Local Offset
+    return nodeViewState.position.value + localOffset;
+  }
+
+  void leftClicked(PortViewState clicked) {
     if (currentlySelectedPort == null) {
       // First click: select the port
       currentlySelectedPort = clicked;
       notifyListeners();
     } else if (currentlySelectedPort != clicked) {
       // Second click: attempt connection
-      createConnection(
-        currentlySelectedPort!.parentNodeID,
-        currentlySelectedPort!.portModel.id,
-        clicked.parentNodeID,
-        clicked.portModel.id,
+      model.createConnection(
+        currentlySelectedPort!.nodeId,
+        currentlySelectedPort!.model.id,
+        clicked.nodeId,
+        clicked.model.id,
       );
 
       // FIX: Clear BOTH the selection and the stale mouse position
@@ -202,28 +278,25 @@ class GraphModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-  void rightClicked(PortVisual clicked){
+  void rightClicked(PortViewState clicked){
     currentlySelectedPort=null;
-    deleteConnectionsOfPortVisual(clicked);
+    model.deleteConnectionsOfPortVisual(clicked.model);
     notifyListeners();
   }
 
-  void nodePositionChanged(NodeVisual node, Offset delta ){
+
+  void nodePositionChanged(NodeViewState node, Offset delta ){
     if(!selectedNodes.value.contains(node)){
       selectedNodes.value=[node];
     }
     //node.position.value+=delta;
 
-    for(NodeVisual selNode in selectedNodes.value){
+    for(NodeViewState selNode in selectedNodes.value){
       selNode.position.value+=delta;
     }
 
     notifyListeners();
   }
-
-  // Marquee logic
-  Offset?marqueeStartPosition;
-  Offset?marqueeEndPosition;
 
   void selectInMarquee(){
     if(marqueeStartPosition!=null&&marqueeEndPosition!=null){
@@ -232,8 +305,8 @@ class GraphModel extends ChangeNotifier {
       double lowestY= min(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
       double highestY=max(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
 
-      List<NodeVisual>inside=[];
-      for(NodeVisual node in nodeVisuals){
+      List<NodeViewState>inside=[];
+      for(NodeViewState node in nodeViewStates.values){
         Offset nodePos=node.position.value;
 
 
@@ -258,10 +331,5 @@ class GraphModel extends ChangeNotifier {
     marqueeStartPosition=null;
     marqueeEndPosition=null;
   }
-
-
-}
-
-class GraphManagerVisual extends ChangeNotifier{
 
 }

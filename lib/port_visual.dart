@@ -5,43 +5,39 @@ import 'package:material_ui/material_ui.dart';
 import 'port_model.dart';
 
 class PortViewState{
-  final GlobalKey key=GlobalKey();
+  String nodeId;
   final PortModel model;
   final ValueNotifier<Offset?>localOffset= ValueNotifier(null);
 
-  PortViewState(this.model);
+  PortViewState(this.model, this.nodeId);
 }
 
 /// A visual representation of a PortModel that tracks its local position within a NodeVisual.
 class PortVisual extends StatefulWidget {
-  /// The pure data model defining the port's logic, direction, and data type.
-  final PortModel portModel;
+
+  final PortViewState portViewState;
+  final GraphVisualiser graphVisualizer;
 
   /// Tracks the port's center coordinate relative to the top-left corner of its parent NodeVisual.
-  final ValueNotifier<Offset> localOffset;
 
   /// A builder function allowing for complete UI customization of the port.
   final Widget Function(BuildContext context, PortVisual visual) builder;
 
-  final GraphModel graphManager;
-  String parentNodeID;
 
   /// Constructs a [PortVisual].
   PortVisual({
     super.key,
-    required this.portModel,
+    required this.portViewState,
+    required this.graphVisualizer,
     required this.builder,
-    Offset initialLocalOffset = Offset.zero,
-    required this.graphManager,
-    required this.parentNodeID
-  }) : localOffset = ValueNotifier<Offset>(initialLocalOffset);
+  }){
+  }
 
   @override
   State<PortVisual> createState() => _PortVisualState();
 }
 
 class _PortVisualState extends State<PortVisual> {
-  // Key used to measure the physical location and size of the port widget.
   final GlobalKey _portKey = GlobalKey();
 
   @override
@@ -67,8 +63,8 @@ class _PortVisualState extends State<PortVisual> {
         ancestor: parentNodeBox, // This is now mathematically locked to the Node's root
       );
 
-      if (widget.localOffset.value != calculatedLocalOffset) {
-        widget.localOffset.value = calculatedLocalOffset;
+      if (widget.portViewState.localOffset.value != calculatedLocalOffset) {
+        widget.portViewState.localOffset.value = calculatedLocalOffset;
       }
     }
   }
@@ -84,18 +80,18 @@ class _PortVisualState extends State<PortVisual> {
       child: SizeChangedLayoutNotifier(
         child: GestureDetector(
           onTap: () {
-            widget.graphManager.leftClicked(widget);
+            widget.graphVisualizer.leftClicked(widget.portViewState);
           },
           onSecondaryTap: (){
-            widget.graphManager.rightClicked(widget);
+            widget.graphVisualizer.rightClicked(widget.portViewState);
           },
           // 1. Listen to the manager for state changes
           child: ListenableBuilder(
-            listenable: widget.graphManager,
+            listenable: widget.graphVisualizer,
             builder: (context, child) {
               return Container(
                 foregroundDecoration: BoxDecoration(
-                  color: widget.graphManager.currentlySelectedPort == widget
+                  color: widget.graphVisualizer.currentlySelectedPort == widget.portViewState
                       ? Colors.black.withOpacity(0.4)
                       : Colors.transparent,
                 ),

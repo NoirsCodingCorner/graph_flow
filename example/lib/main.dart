@@ -14,38 +14,40 @@ class GraphEditorApp extends StatefulWidget {
 }
 
 class _GraphEditorAppState extends State<GraphEditorApp> {
-  GraphManager manager = GraphManager();
+  GraphModel model = GraphModel(
+    allowedConnections: {
+      String: [String, dynamic],
+      int: [int, double, dynamic],
+    },
+  );
+  late GraphVisualiser visualiser;
 
-  @override
-  void initState() {
-    super.initState();
-    _setupDemoGraph();
-  }
-
-// 1. Shared UI Builders for styling
-  final TextStyle _nodeTextStyle = const TextStyle(
+  TextStyle _nodeTextStyle = const TextStyle(
     color: Colors.white,
     fontWeight: FontWeight.w600,
     fontSize: 14,
     letterSpacing: 0.5,
   );
 
-  Widget _buildNodeUI(List<Widget> children, GraphManager manager) {
-    return ValueListenableBuilder(
-      valueListenable: manager.selectedNodes,
-      builder: (context, value, child) {
-        return Container(
-          width: 140,
-          height: 60,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: children,
-            ),
-          ),
-        );
-      }
+  @override
+  void initState() {
+    super.initState();
+    visualiser = GraphVisualiser(model);
+    _registerBuilders();
+    _setupDemoGraph();
+  }
+
+  Widget _buildNodeUI(List<Widget> children) {
+    return SizedBox(
+      width: 140,
+      height: 60,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: children,
+        ),
+      ),
     );
   }
 
@@ -68,82 +70,72 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
     );
   }
 
-// 2. Factory Methods for Inputs and Outputs
-  void _createOutputNode(String nodeId, String nodeName, String portId, Offset position) {
-    PortModel portModel = PortModel(id: portId, direction: PortDirection.output, type: String);
-    NodeModel nodeModel = NodeModel(id: nodeId, typeName: nodeName, ports: [portModel]);
+  void _registerBuilders() {
+    visualiser.portBuilders[String] = (BuildContext context, PortVisual visual) {
+      return _buildPortUI(const Color(0xFF43B581));
+    };
 
-    NodeVisual nodeVisual = NodeVisual(
-      nodeModel: nodeModel,
-      initialPosition: position,
-      builder: (BuildContext context, NodeVisual visual, List<PortVisual> ports, GraphManager manager) {
-        // Output nodes put the text on the left and the port on the right
-        return _buildNodeUI([Text(nodeName, style: _nodeTextStyle), ports[0]],manager);
-      },
-      graphManager: manager,
-    );
+    visualiser.portBuilders[int] = (BuildContext context, PortVisual visual) {
+      return _buildPortUI(const Color(0xFFFAA61A));
+    };
 
-    PortVisual portVisual = PortVisual(
-      portModel: portModel,
-      builder: (context, visual) => _buildPortUI(const Color(0xFF43B581)), // Soft green
-      graphManager: manager,
-      parentNodeID: nodeModel.id,
-    );
+    visualiser.nodeBuilders['OutputNode'] = (BuildContext context, NodeViewState state, Map<String, PortVisual> ports) {
+      return _buildNodeUI([
+        Text(state.model.id, style: _nodeTextStyle),
+        ports.values.first
+      ]);
+    };
 
-    nodeVisual.portVisuals.add(portVisual);
-    manager.addNode(nodeModel, nodeVisual);
+    visualiser.nodeBuilders['InputNode'] = (BuildContext context, NodeViewState state, Map<String, PortVisual> ports) {
+      return _buildNodeUI([
+        ports.values.first,
+        Text(state.model.id, style: _nodeTextStyle)
+      ]);
+    };
   }
 
-  void _createInputNode(String nodeId, String nodeName, String portId, Offset position) {
-    PortModel portModel = PortModel(id: portId, direction: PortDirection.input, type: String);
-    NodeModel nodeModel = NodeModel(id: nodeId, typeName: nodeName, ports: [portModel]);
+  void _createOutputNode(String nodeId, String portId, Offset position) {
+    PortModel portModel = PortModel(id: portId, type: String, direction: PortDirection.output);
+    NodeModel nodeModel = NodeModel(id: nodeId, typeName: 'OutputNode', ports: [portModel]);
 
-    NodeVisual nodeVisual = NodeVisual(
-      nodeModel: nodeModel,
-      initialPosition: position,
-      builder: (BuildContext context, NodeVisual visual, List<PortVisual> ports, GraphManager manager) {
-        // Input nodes put the port on the left and the text on the right
-        return _buildNodeUI([ports[0], Text(nodeName, style: _nodeTextStyle)], manager);
-      },
-      graphManager: manager,
-    );
-
-    PortVisual portVisual = PortVisual(
-      portModel: portModel,
-      builder: (context, visual) => _buildPortUI(const Color(0xFFFAA61A)), // Soft orange
-      graphManager: manager,
-      parentNodeID: nodeModel.id,
-    );
-
-    nodeVisual.portVisuals.add(portVisual);
-    manager.addNode(nodeModel, nodeVisual);
+    model.addNode(nodeModel);
+    visualiser.nodeViewStates[nodeId] = NodeViewState(nodeModel, position);
   }
 
-// 3. Clean Setup Execution
+  void _createInputNode(String nodeId, String portId, Offset position) {
+    PortModel portModel = PortModel(id: portId, type: String, direction: PortDirection.input);
+    NodeModel nodeModel = NodeModel(id: nodeId, typeName: 'InputNode', ports: [portModel]);
+
+    model.addNode(nodeModel);
+    visualiser.nodeViewStates[nodeId] = NodeViewState(nodeModel, position);
+  }
+
   void _setupDemoGraph() {
-    int input=25;
-    for(int i=0;i<input;i++){
-      _createInputNode('node_B$i', 'Layer_0_$i', 'in_$i', Offset(1000, i*60));
+    int input = 25;
+    for (int i = 0; i < input; i++) {
+      _createInputNode('Layer_0_$i', 'in_$i', Offset(1000, i * 60.0));
     }
 
-    int output=25;
-    for(int o=0;o<output;o++){
-      _createOutputNode('node_A$o', 'Layer_1_$o', 'out_$o', Offset(0, o*60));
+    int output = 2;
+    for (int o = 0; o < output; o++) {
+      _createOutputNode('Layer_1_$o', 'out_$o', Offset(0, o * 60.0));
     }
 
-    for(int i=0;i<input;i++){
-      for(int o=0;o<output;o++){
-        manager.createConnection('node_A$o', 'out_$o', 'node_B$i', 'in_$i');
+    for (int i = 0; i < input; i++) {
+      for (int o = 0; o < output; o++) {
+        model.createConnection('Layer_1_$o', 'out_$o', 'Layer_0_$i', 'in_$i');
       }
     }
-
-
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: GraphCanvas(manager: manager, canvasLayout: CanvasLayout.darkAnimatedNeonCyan,),
+        body: GraphCanvas(
+          visualiser: visualiser,
+          canvasLayout: CanvasLayout.darkDefault,
+        ),
       ),
     );
   }

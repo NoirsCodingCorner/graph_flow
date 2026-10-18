@@ -1,14 +1,14 @@
-
-enum PortDirection{
-  input, output
+enum PortDirection {
+  input,
+  output,
+  inout
 }
 
 class PortModel{
   String id;
-  PortDirection direction;
   Type type;
-
-  PortModel({required this.id, required this.direction, required this.type});
+  PortDirection direction;
+  PortModel({required this.id, required this.type,required this.direction});
 
 }
 

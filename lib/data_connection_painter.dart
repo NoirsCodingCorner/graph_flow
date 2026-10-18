@@ -10,7 +10,7 @@ enum ConnectionShape {
 
 /// A high-performance painter that draws connections and animated dots.
 class DataConnectionPainter extends CustomPainter {
-  final GraphModel manager;
+  final GraphVisualiser visualiser;
   final Animation<double> animation;
 
   final Color lineColor;
@@ -37,7 +37,7 @@ class DataConnectionPainter extends CustomPainter {
 
   // 2. Conditionally bind the animation. If false, the canvas only repaints when nodes move/connect.
   DataConnectionPainter(
-      this.manager,
+      this.visualiser,
       this.animation, {
         required this.lineColor,
         this.lineColorShadow = Colors.black,
@@ -48,7 +48,7 @@ class DataConnectionPainter extends CustomPainter {
         this.enableLineGlow = true,
         this.enableDotGlow = true,
         this.connectionShape = ConnectionShape.bezier,
-      }) : super(repaint: enableAnimation ? Listenable.merge([manager, animation]) : manager) {
+      }) : super(repaint: enableAnimation ? Listenable.merge([visualiser, animation]) : visualiser) {
 
     // Initialize core paints
     _linePaint = Paint()
@@ -97,12 +97,12 @@ class DataConnectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // --- 1. Draw established connections ---
-    List<ConnectionModel> hoveredConnections=manager.getConnectionsOfNode(manager.currentlyHoveredNode?.nodeModel);
-    for (final connection in manager.connectionModels) {
-      Offset? startOffset = manager.getAbsolutePortPosition(
+    List<ConnectionModel> hoveredConnections=visualiser.model.getConnectionsOfNode(visualiser.currentlyHoveredNode?.model);
+    for (ConnectionModel connection in visualiser.model.connectionModels) {
+      Offset? startOffset = visualiser.getAbsolutePortPosition(
           connection.sourceNodeId, connection.sourcePortId);
 
-      Offset? endOffset = manager.getAbsolutePortPosition(
+      Offset? endOffset = visualiser.getAbsolutePortPosition(
           connection.targetNodeId, connection.targetPortId);
 
 
@@ -111,10 +111,10 @@ class DataConnectionPainter extends CustomPainter {
       }
     }
     for (final connection in hoveredConnections) {
-      Offset? startOffset = manager.getAbsolutePortPosition(
+      Offset? startOffset = visualiser.getAbsolutePortPosition(
           connection.sourceNodeId, connection.sourcePortId);
 
-      Offset? endOffset = manager.getAbsolutePortPosition(
+      Offset? endOffset = visualiser.getAbsolutePortPosition(
           connection.targetNodeId, connection.targetPortId);
 
       if (startOffset != null && endOffset != null) {
@@ -125,15 +125,15 @@ class DataConnectionPainter extends CustomPainter {
 
 
     // --- 2. Draw live preview connection ---
-    if (manager.currentlySelectedPort != null && manager.mousePosition != null) {
-      Offset? startOffset = manager.getAbsolutePortPosition(
-          manager.currentlySelectedPort!.parentNodeID,
-          manager.currentlySelectedPort!.portModel.id);
+    if (visualiser.currentlySelectedPort != null && visualiser.mousePosition != null) {
+      Offset? startOffset = visualiser.getAbsolutePortPosition(
+          visualiser.currentlySelectedPort!.nodeId,
+          visualiser.currentlySelectedPort!.model.id);
 
       if (startOffset != null) {
         // Draw the path using the mouse position as the end target.
         // We set drawDots to false so the preview line is just a solid beam.
-        _drawConnectionPath(canvas, startOffset, manager.mousePosition!, false,true);
+        _drawConnectionPath(canvas, startOffset, visualiser.mousePosition!, false,true);
       }
     }
   }
