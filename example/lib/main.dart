@@ -1,4 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:graph_flow/connection_model.dart';
+import 'package:graph_flow/graph_model.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:graph_flow/canvas_configuration.dart';
 import 'package:graph_flow/graph_flow.dart';
 
@@ -22,19 +24,28 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
   );
   late GraphVisualiser visualiser;
 
-  TextStyle _nodeTextStyle = const TextStyle(
+  final TextStyle _nodeTextStyle = const TextStyle(
     color: Colors.white,
     fontWeight: FontWeight.w600,
     fontSize: 14,
     letterSpacing: 0.5,
   );
 
+  // In-memory mock database
+  Map<String, dynamic>? savedGraphData;
+  Map<String, dynamic>? savedVisualData;
+
+  // The registry required for PortModel.fromJson
+  Map<String, Type> typeRegistry = {
+    "int": int,
+    "String": String,
+  };
+
   @override
   void initState() {
     super.initState();
     visualiser = GraphVisualiser(model);
     _registerBuilders();
-    _setupDemoGraph();
   }
 
   Widget _buildNodeUI(List<Widget> children) {
@@ -61,7 +72,7 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
         border: Border.all(color: Colors.white, width: 2),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.5),
+            color: color.withValues(alpha: 0.5),
             blurRadius: 6,
             spreadRadius: 1,
           ),
@@ -92,49 +103,118 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
         Text(state.model.id, style: _nodeTextStyle)
       ]);
     };
+
+    visualiser.nodeBuilders['AddInts'] = (BuildContext context, NodeViewState state, Map<String, PortVisual> ports) {
+      String nodeId = state.model.id;
+      return SizedBox(
+        width: 180,
+        height: 80,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ports["${nodeId}_in_a"]!,
+                  ports["${nodeId}_in_b"]!,
+                ],
+              ),
+              Text(state.model.id, style: _nodeTextStyle),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ports["${nodeId}_out_result"]!,
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    };
   }
 
-  void _createOutputNode(String nodeId, String portId, Offset position) {
-    PortModel portModel = PortModel(id: portId, type: String, direction: PortDirection.output);
-    NodeModel nodeModel = NodeModel(id: nodeId, typeName: 'OutputNode', ports: [portModel]);
+  NodeModel createAddIntsNode(String uniqueId) {
+    PortModel inputA = PortModel(
+      id: "${uniqueId}_in_a",
+      type: int,
+      direction: PortDirection.input,
+      maxConnections: 1,
+    );
 
-    model.addNode(nodeModel);
-    visualiser.nodeViewStates[nodeId] = NodeViewState(nodeModel, position);
+    PortModel inputB = PortModel(
+      id: "${uniqueId}_in_b",
+      type: int,
+      direction: PortDirection.input,
+      maxConnections: 1,
+    );
+
+    PortModel outputResult = PortModel(
+      id: "${uniqueId}_out_result",
+      type: int,
+      direction: PortDirection.output,
+      maxConnections: 0,
+    );
+
+    return NodeModel(
+      id: uniqueId,
+      typeName: "AddInts",
+      ports: [inputA, inputB, outputResult],
+    );
   }
 
-  void _createInputNode(String nodeId, String portId, Offset position) {
-    PortModel portModel = PortModel(id: portId, type: String, direction: PortDirection.input);
-    NodeModel nodeModel = NodeModel(id: nodeId, typeName: 'InputNode', ports: [portModel]);
-
-    model.addNode(nodeModel);
-    visualiser.nodeViewStates[nodeId] = NodeViewState(nodeModel, position);
-  }
-
-  void _setupDemoGraph() {
-    int input = 25;
-    for (int i = 0; i < input; i++) {
-      _createInputNode('Layer_0_$i', 'in_$i', Offset(1000, i * 60.0));
-    }
-
-    int output = 2;
-    for (int o = 0; o < output; o++) {
-      _createOutputNode('Layer_1_$o', 'out_$o', Offset(0, o * 60.0));
-    }
-
-    for (int i = 0; i < input; i++) {
-      for (int o = 0; o < output; o++) {
-        model.createConnection('Layer_1_$o', 'out_$o', 'Layer_0_$i', 'in_$i');
-      }
-    }
-  }
+  int counter = 0;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: GraphCanvas(
-          visualiser: visualiser,
-          canvasLayout: CanvasLayout.darkDefault,
+        body: Stack(
+          children: [
+            GraphCanvas(
+              visualiser: visualiser,
+              canvasLayout: CanvasLayout.darkAnimatedNeonCyan,
+            ),
+            Positioned(
+              top: 20,
+              left: 20,
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      savedGraphData = model.toJson();
+                      savedVisualData = visualiser.toJson();
+                      print("Graph Saved.");
+                    },
+                    child: const Text("Save Graph"),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (savedGraphData != null && savedVisualData != null) {
+                        model.loadFromJson(savedGraphData!, typeRegistry);
+                        // The model loading triggers synch() in Visualiser, creating default (0,0) states.
+                        // We must wait for the next frame to let the synch finish, then apply saved positions.
+                        visualiser.loadPositions(savedVisualData!);
+                      } else {
+                        print("No save data found.");
+                      }
+                    },
+                    child: const Text("Load Graph"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            NodeModel addNode = createAddIntsNode("AddNode_$counter");
+            model.addNode(addNode);
+            counter++;
+          },
+          child: const Icon(Icons.add),
         ),
       ),
     );

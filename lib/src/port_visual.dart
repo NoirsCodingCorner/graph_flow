@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:graph_flow/graph_flow.dart';
 import 'package:material_ui/material_ui.dart';
+
+import 'graph_visualiser.dart';
 import 'port_model.dart';
 
 class PortViewState{
@@ -12,7 +12,11 @@ class PortViewState{
   PortViewState(this.model, this.nodeId);
 }
 
-/// A visual representation of a PortModel that tracks its local position within a NodeVisual.
+/// The Widget for the PortViewState Objects Rendering.
+/// Does only contain:
+/// - [portViewState]: the state object to render.
+/// - [graphVisualizer]: the [GraphVisualiser] that is responsible to render the actual graph.
+/// - [builder]: build function for this specific type of port.
 class PortVisual extends StatefulWidget {
 
   final PortViewState portViewState;
@@ -25,13 +29,12 @@ class PortVisual extends StatefulWidget {
 
 
   /// Constructs a [PortVisual].
-  PortVisual({
+  const PortVisual({
     super.key,
     required this.portViewState,
     required this.graphVisualizer,
     required this.builder,
-  }){
-  }
+  });
 
   @override
   State<PortVisual> createState() => _PortVisualState();
@@ -92,7 +95,7 @@ class _PortVisualState extends State<PortVisual> {
               return Container(
                 foregroundDecoration: BoxDecoration(
                   color: widget.graphVisualizer.currentlySelectedPort == widget.portViewState
-                      ? Colors.black.withOpacity(0.4)
+                      ? Colors.black.withValues(alpha: 0.4)
                       : Colors.transparent,
                 ),
                 // 3. Render the cached child (the port UI) underneath the overlay

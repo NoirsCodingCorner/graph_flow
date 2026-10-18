@@ -1,7 +1,7 @@
 import 'dart:ui';
-import 'package:flutter/material.dart';
-import 'package:graph_flow/connection_model.dart';
-import 'graph_manager.dart';
+import 'package:material_ui/material_ui.dart';
+import 'connection_model.dart';
+import 'graph_visualiser.dart';
 
 enum ConnectionShape {
   direct,
@@ -71,13 +71,13 @@ class DataConnectionPainter extends CustomPainter {
     // 3. Only initialize expensive blur filters if glowing is enabled
     if (enableLineGlow) {
       _glowPaintOuter = Paint()
-        ..color = lineColorShadow.withOpacity(0.15) // Lighter opacity
+        ..color = lineColorShadow.withValues(alpha: 0.15) // Lighter opacity
         ..strokeWidth = 12.0 // Wider stroke
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;
 
       _glowPaintInner = Paint()
-        ..color = lineColorShadow.withOpacity(0.3) // Darker opacity
+        ..color = lineColorShadow.withValues(alpha: 0.3) // Darker opacity
         ..strokeWidth = 7.0 // Narrower stroke
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;
@@ -85,11 +85,11 @@ class DataConnectionPainter extends CustomPainter {
 
     if (enableDotGlow) {
       _dotGlowPaintOuter = Paint()
-        ..color = dotColorShadow.withOpacity(0.15)
+        ..color = dotColorShadow.withValues(alpha: 0.15)
         ..style = PaintingStyle.fill;
 
       _dotGlowPaintInner = Paint()
-        ..color = dotColorShadow.withOpacity(0.3)
+        ..color = dotColorShadow.withValues(alpha: 0.3)
         ..style = PaintingStyle.fill;
     }
   }
@@ -138,7 +138,6 @@ class DataConnectionPainter extends CustomPainter {
     }
   }
 
-  /// Helper method to keep the paint function clean
   /// Helper method to keep the paint function clean
   void _drawConnectionPath(Canvas canvas, Offset startOffset, Offset endOffset, bool drawDots, bool highlight) {
     // FIX: Prevent zero-dimension bounding boxes which cause Flutter to drop blur filters.

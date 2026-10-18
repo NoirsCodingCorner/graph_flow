@@ -1,16 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:graph_flow/graph_flow.dart';
-import 'package:graph_flow/port_visual.dart';
-import 'package:graph_flow/position_snapper.dart';
+
+import 'graph_visualiser.dart';
 import 'node_model.dart';
+import 'port_model.dart';
+import 'port_visual.dart';
+import 'position_snapper.dart';
 
 class NodeViewState {
   final NodeModel model;
   final ValueNotifier<Offset> position;
   final ValueNotifier<Size> size = ValueNotifier(Size.zero);
   final Map<String, PortViewState> ports;
+  int paintOrder = 0;
 
   NodeViewState(this.model, Offset start)
       : position = ValueNotifier(start),
@@ -19,20 +21,24 @@ class NodeViewState {
         };
 }
 
-/// A visual representation of a NodeModel that manages its own position, size, and layout.
+/// The Widget to render a NodeViewState.
+/// Does only contain:
+/// - [nodeViewState]: the state object to render.
+/// - [graphVisualizer]: the [GraphVisualiser] that is responsible to render the actual graph.
+/// - [builder]: build function for the specified type of node.
 class NodeVisual extends StatefulWidget {
   final NodeViewState nodeViewState;
-  final GraphVisualiser visualiser;
+  final GraphVisualiser graphVisualizer;
 
   /// A builder function allowing for complete UI customization.
   final Widget Function(BuildContext context, NodeViewState state,
       Map<String, PortVisual> ports) builder;
 
   /// Constructs a [NodeVisual].
-  NodeVisual({
+  const NodeVisual({
     super.key,
     required this.nodeViewState, // NodeViewState, created by the visualiser
-    required this.visualiser,
+    required this.graphVisualizer,
     required this.builder,
   });
 
@@ -68,8 +74,8 @@ class _NodeVisualState extends State<NodeVisual> {
         p.model.id: PortVisual(
           key: ValueKey(p.model.id),
           portViewState: p,
-          graphVisualizer: widget.visualiser,
-          builder: widget.visualiser.getPortBuilderByType(p.model.type),
+          graphVisualizer: widget.graphVisualizer,
+          builder: widget.graphVisualizer.getPortBuilderByType(p.model.type),
         ),
     };
     // 1. ValueListenableBuilder isolates position updates.
@@ -77,7 +83,7 @@ class _NodeVisualState extends State<NodeVisual> {
     return ValueListenableBuilder<Offset>(
       valueListenable: widget.nodeViewState.position,
       builder: (context, position, child) {
-        Offset snappedPosition = PositionSnapper.snapOffset(position);
+        Offset snappedPosition = PositionSnapper.snapOffset(position)!;
         return Positioned(
           left: snappedPosition.dx,
           top: snappedPosition.dy,
@@ -89,35 +95,34 @@ class _NodeVisualState extends State<NodeVisual> {
       child: RepaintBoundary(
         child: MouseRegion(
           onEnter: (details) {
-            widget.visualiser.setLastHovered(widget.nodeViewState);
+            widget.graphVisualizer.setLastHovered(widget.nodeViewState);
           },
           onExit: (details) {
-            widget.visualiser.removeHovered(widget.nodeViewState);
+            widget.graphVisualizer.removeHovered(widget.nodeViewState);
           },
           child: GestureDetector(
             onTap: () {
               if (HardwareKeyboard.instance.isShiftPressed) {
-                if (widget.visualiser.selectedNodes.value
+                if (widget.graphVisualizer.selectedNodes.value
                     .contains(widget.nodeViewState)) {
-                  widget.visualiser.selectedNodes.value
+                  widget.graphVisualizer.selectedNodes.value
                       .remove(widget.nodeViewState);
-                  widget.visualiser.selectedNodes.value = [
-                    ...widget.visualiser.selectedNodes.value
+                  widget.graphVisualizer.selectedNodes.value = [
+                    ...widget.graphVisualizer.selectedNodes.value
                   ];
                 } else {
-                  widget.visualiser.selectedNodes.value = [
-                    ...widget.visualiser.selectedNodes.value,
+                  widget.graphVisualizer.selectedNodes.value = [
+                    ...widget.graphVisualizer.selectedNodes.value,
                     widget.nodeViewState
                   ];
                 }
               } else {
-                widget.visualiser.selectedNodes.value = [widget.nodeViewState];
+                widget.graphVisualizer.selectedNodes.value = [widget.nodeViewState];
               }
-              print(widget.visualiser.selectedNodes.value.length);
             },
             onPanUpdate: (details) {
               // Instantly update the node's local position state
-              widget.visualiser
+              widget.graphVisualizer
                   .nodePositionChanged(widget.nodeViewState, details.delta);
             },
             // 3. Automatically triggers an update if the custom builder content resizes dynamically.
@@ -129,7 +134,7 @@ class _NodeVisualState extends State<NodeVisual> {
               },
               child: SizeChangedLayoutNotifier(
                 child: ValueListenableBuilder(
-                    valueListenable: widget.visualiser.selectedNodes,
+                    valueListenable: widget.graphVisualizer.selectedNodes,
                     builder: (context, value, child) {
                       return Container(
                         decoration: BoxDecoration(
@@ -142,7 +147,7 @@ class _NodeVisualState extends State<NodeVisual> {
                               width: 1.5),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
+                              color: Colors.black.withValues(alpha: 0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),

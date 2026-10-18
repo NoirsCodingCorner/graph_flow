@@ -1,13 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
-import '../src/grid_widget.dart';
 import 'canvas_configuration.dart';
 import 'data_connection_painter.dart';
-import 'graph_manager.dart';
+import 'graph_visualiser.dart';
+import 'grid_widget.dart';
 import 'node_visual.dart';
 
 /// The main interactive canvas for the node graph.
@@ -72,6 +72,24 @@ class _GraphCanvasState extends State<GraphCanvas>
           child: ValueListenableBuilder(
             valueListenable: canPan,
             builder: (context, pan, child) {
+
+              List<NodeViewState> sortedNodes = widget.visualiser.nodeViewStates.values.toList();
+              sortedNodes.sort((NodeViewState a, NodeViewState b) {
+                return a.paintOrder.compareTo(b.paintOrder);
+              });
+
+              List<Widget> nodeWidgets = [];
+              for (int i = 0; i < sortedNodes.length; i++) {
+                NodeViewState nodeState = sortedNodes[i];
+                Widget nodeWidget = NodeVisual(
+                  key: ValueKey(nodeState.model.id),
+                  nodeViewState: nodeState,
+                  graphVisualizer: widget.visualiser,
+                  builder: widget.visualiser.getNodeBuilderByType(nodeState.model.typeName)!,
+                );
+                nodeWidgets.add(nodeWidget);
+              }
+
               return InteractiveViewer(
                 panEnabled: pan,
                 transformationController: _transformationController,
@@ -124,16 +142,7 @@ class _GraphCanvasState extends State<GraphCanvas>
                           ),
 
                           // Dynamically build NodeVisuals from the visualiser's state
-                          ...widget.visualiser.nodeViewStates.values
-                              .map((nodeState) {
-                            return NodeVisual(
-                              key: ValueKey(nodeState.model.id),
-                              nodeViewState: nodeState,
-                              visualiser: widget.visualiser,
-                              builder: widget.visualiser.getNodeBuilderByType(
-                                  nodeState.model.typeName)!,
-                            );
-                          }),
+                          ...nodeWidgets,
 
                           IgnorePointer(
                             child: CustomPaint(
