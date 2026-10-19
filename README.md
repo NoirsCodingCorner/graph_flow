@@ -2,8 +2,12 @@
 
 # GraphFlow
 <p align="center">
-  <img src=https://github.com/user-attachments/assets/c17583bc-be4e-4b3e-9002-9694068f4b1b?raw=true" alt="Screenshot">
+<img src="https://raw.githubusercontent.com/NoirsCodingCorner/graph_flow/master/doc/logo.png" alt="Graph Flow Logo" width="200">
 </p>
+
+You can adjust width="200" to change the display size.
+
+My recommendation: Use the absolute GitHub URL and test it by opening the URL directly in your browser. Make sure doc/logo.png is committed to your public repository and available on the selected branch.
 
 GraphFlow is a powerful and flexible Flutter package for building interactive node-based editors. It provides a highly customizable canvas with support for grid backgrounds, dynamic node positioning, and a range of connection rendering styles with advanced pan & zoom functionalities. Build flowcharts, diagram editors, visual programming environments, and more – all with ease!
 
