@@ -1,7 +1,4 @@
-import 'package:graph_flow/connection_model.dart';
-import 'package:graph_flow/graph_model.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:graph_flow/canvas_configuration.dart';
 import 'package:graph_flow/graph_flow.dart';
 
 void main() {
@@ -174,7 +171,7 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
           children: [
             GraphCanvas(
               visualiser: visualiser,
-              canvasLayout: CanvasLayout.darkAnimatedNeonCyan,
+              canvasLayout: CanvasLayout.darkAnimatedNeonYellow,
             ),
             Positioned(
               top: 20,

@@ -3,12 +3,15 @@ import 'package:material_ui/material_ui.dart';
 import 'connection_model.dart';
 import 'graph_visualiser.dart';
 
+/// Defines the drawing type of the connection. Either [bezier] or [direct] supported.
 enum ConnectionShape {
   direct,
   bezier
 }
 
 /// A high-performance painter that draws connections and animated dots.
+/// Uses the Visualizer to determine selected and highlighting aspects of its connections.
+/// The [animation] uses one global instance to allow performant animation of all connection indicators.
 class DataConnectionPainter extends CustomPainter {
   final GraphVisualiser visualiser;
   final Animation<double> animation;
@@ -24,7 +27,7 @@ class DataConnectionPainter extends CustomPainter {
   final bool enableDotGlow;
   final ConnectionShape connectionShape;
 
-  // 1. Cache Paint objects so they are only created once, not 60 times a second
+  // Cache Paint objects so they are only created once, not 60 times a second
   late final Paint _linePaint;
   late final Paint _lineHighlightPaint;
 
@@ -35,7 +38,7 @@ class DataConnectionPainter extends CustomPainter {
   late final Paint _dotGlowPaintOuter;
   late final Paint _dotGlowPaintInner;
 
-  // 2. Conditionally bind the animation. If false, the canvas only repaints when nodes move/connect.
+  // Conditionally bind the animation. If false, the canvas only repaints when nodes move/connect.
   DataConnectionPainter(
       this.visualiser,
       this.animation, {
@@ -68,7 +71,7 @@ class DataConnectionPainter extends CustomPainter {
       ..color = dotColor
       ..style = PaintingStyle.fill;
 
-    // 3. Only initialize expensive blur filters if glowing is enabled
+    // Only initialize expensive blur filters if glowing is enabled
     if (enableLineGlow) {
       _glowPaintOuter = Paint()
         ..color = lineColorShadow.withValues(alpha: 0.15) // Lighter opacity

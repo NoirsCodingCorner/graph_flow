@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'graph_visualiser.dart';
 import 'port_model.dart';
 
+/// Represents the state for [PortVisual] containing [localOffset], the ports parent [nodeId] and the reference to [PortModel].
 class PortViewState{
   String nodeId;
   final PortModel model;

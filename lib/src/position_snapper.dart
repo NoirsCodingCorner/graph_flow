@@ -1,6 +1,9 @@
 
 import 'dart:ui';
 
+/// Snaps a position to a defined granularity.
+/// Global attribute [granularity] can be defined for snapping behaviour of the nodes on a canvas.
+/// Setting it to 0 disables snapping.
 class PositionSnapper {
   static double granularity=0;
 

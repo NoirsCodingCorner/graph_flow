@@ -7,6 +7,9 @@ import 'port_model.dart';
 import 'port_visual.dart';
 import 'position_snapper.dart';
 
+/// The state of a visual node element. The NodeVisual uses this to render and react to changes
+/// properly. Contains a reference to [model], [position], [size] and the PortViewStates of [ports].
+/// If [paintOrder] is 0 it is considered standard node. With paintOrder 1 it will be drawn above the other nodes.
 class NodeViewState {
   final NodeModel model;
   final ValueNotifier<Offset> position;

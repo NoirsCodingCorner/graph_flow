@@ -18,6 +18,9 @@ class GraphCanvas extends StatefulWidget {
   final GraphVisualiser visualiser;
   final CanvasLayout canvasLayout;
 
+  /// Graph canvas handles the rendering, positioning and marquee selection of the provided [GraphVisualiser].
+  /// It requires a [CanvasLayout] to know what style to draw and render in. It listens to its [GraphVisualiser] for events and updates itself
+  /// without storing states itself for improved performance. Additionally gives [DataConnectionPainter] its Animation controller for indicator animations.
   const GraphCanvas({
     super.key,
     required this.visualiser,
@@ -168,7 +171,7 @@ class _GraphCanvasState extends State<GraphCanvas>
                                 enableDotGlow:
                                     widget.canvasLayout.connectionEnableDotGlow,
                                 connectionShape: widget
-                                    .canvasLayout.connectionConnectionShape,
+                                    .canvasLayout.connectionShape,
                               ),
                             ),
                           ),

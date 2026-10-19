@@ -7,6 +7,15 @@ import 'node_model.dart';
 import 'node_visual.dart';
 import 'port_visual.dart';
 
+/// A [GraphVisualiser] sits on top of a [GraphModel] (the data) and keeps
+/// track of everything that is purely visual or interactive: where each node
+/// is drawn, which nodes are selected or hovered, which port is currently
+/// being connected, and the state of the marquee (rubber-band) selection.
+///
+/// It extends [ChangeNotifier], so widgets can listen to it and rebuild
+/// whenever the visual state changes. It also listens to the underlying
+/// [GraphModel] and keeps [nodeViewStates] in [synch] with the model's nodes
+
 class GraphVisualiser extends ChangeNotifier{
   GraphModel model;
 
@@ -23,7 +32,9 @@ class GraphVisualiser extends ChangeNotifier{
   Offset?marqueeStartPosition;
   Offset?marqueeEndPosition;
 
+  /// Building method to be used for each Node that gets build.
   Map<String,Widget Function(BuildContext context, NodeViewState state, Map<String, PortVisual> ports)> nodeBuilders={};
+  /// Building method to be used for each Port that gets build.
   Map<Type,Widget Function(BuildContext context, PortVisual visual)> portBuilders={};
   Widget Function(BuildContext context, NodeViewState state, Map<String, PortVisual> ports)? getNodeBuilderByType(String typeName){
     return nodeBuilders[typeName]!;
@@ -32,7 +43,9 @@ class GraphVisualiser extends ChangeNotifier{
     return portBuilders[type]!;
   }
 
-
+  /// GraphVisualiser manages a given Graph by handling the visual and state managing of widgets.
+  /// The provided [GraphModel] ([model]) is to be seen as the actual Graph (source of truth) that this visualiser is allowed to interact with.
+  /// Updates on the original are reacted upon to allow for changes of the graph without the visual editor (like programmatic updates, Agent additions etc.)
   GraphVisualiser(this.model){
     selectedNodes.addListener(() {
       bringToFront(selectedNodes.value);
@@ -41,6 +54,8 @@ class GraphVisualiser extends ChangeNotifier{
     model.addListener(synch);
   }
 
+  /// Method that is assigned to react to changes in the provided [GraphModel] model.
+  /// If events such as node or connection creation has occurred the visualizer updates itself to reflect the new Graph state.
   void synch() {
     for (int i = 0; i < model.nodeModels.length; i++) {
       NodeModel nodeModel = model.nodeModels[i];
@@ -193,8 +208,13 @@ class GraphVisualiser extends ChangeNotifier{
     }
   }
 
-
-
+  /// Serialises the node layout to a Json map.
+  ///
+  /// The result maps each node id to its position, e.g.
+  /// `{"nodeId": {"x": 120.0, "y": 80.5}}`. Only positions are stored; the
+  /// graph structure itself belongs to [model]. Use [loadPositions] to restore
+  /// the layout.
+  ///
   Map<String, Object?> toJson() {
     Map<String, Object?> positions = {};
 
@@ -212,6 +232,15 @@ class GraphVisualiser extends ChangeNotifier{
 
     return positions;
   }
+  /// Restores node positions from a map produced by [toJson].
+  ///
+  /// Entries whose node id does not exist in [nodeViewStates] are ignored. The
+  /// positions are applied in a post-frame callback so that the node view
+  /// states created by [synch] exist before they are updated. Listeners are
+  /// notified once all positions have been applied.
+  ///
+  /// Each entry must contain numeric `"x"` and `"y"` values typed as
+  /// [double], otherwise the cast will throw.
 
   void loadPositions(Map<String, dynamic> json) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
