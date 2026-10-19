@@ -31,13 +31,18 @@ class GraphModel extends ChangeNotifier {
   /// Checks if two [PortDirection] values are compatible for a connection.
   bool isDirectionCompatible(PortDirection dirA, PortDirection dirB) {
     if (dirA == PortDirection.inout || dirB == PortDirection.inout) return true;
-    if (dirA == PortDirection.input && dirB == PortDirection.output) return true;
-    if (dirA == PortDirection.output && dirB == PortDirection.input) return true;
+    if (dirA == PortDirection.input && dirB == PortDirection.output) {
+      return true;
+    }
+    if (dirA == PortDirection.output && dirB == PortDirection.input) {
+      return true;
+    }
     return false;
   }
 
   /// Validates whether a connection can be successfully established between two ports.
-  bool canConnect(PortModel source, NodeModel sourceNode, PortModel target, NodeModel targetNode) {
+  bool canConnect(PortModel source, NodeModel sourceNode, PortModel target,
+      NodeModel targetNode) {
     if (sourceNode.id == targetNode.id) {
       return false;
     }
@@ -49,7 +54,8 @@ class GraphModel extends ChangeNotifier {
     PortModel actualOutput = source;
     PortModel actualInput = target;
 
-    if (source.direction == PortDirection.input || target.direction == PortDirection.output) {
+    if (source.direction == PortDirection.input ||
+        target.direction == PortDirection.output) {
       actualOutput = target;
       actualInput = source;
     }
@@ -58,7 +64,8 @@ class GraphModel extends ChangeNotifier {
     Type inType = actualInput.type;
     bool isValidType = false;
 
-    if (actualOutput.direction == PortDirection.inout || actualInput.direction == PortDirection.inout) {
+    if (actualOutput.direction == PortDirection.inout ||
+        actualInput.direction == PortDirection.inout) {
       List<Type>? sourceAllowed = allowedConnections[actualOutput.type];
       if (sourceAllowed != null) {
         for (int i = 0; i < sourceAllowed.length; i++) {
@@ -86,13 +93,15 @@ class GraphModel extends ChangeNotifier {
 
     for (int i = 0; i < connectionModels.length; i++) {
       ConnectionModel conn = connectionModels[i];
-      if (conn.sourcePortId == actualOutput.id && conn.targetPortId == actualInput.id) {
+      if (conn.sourcePortId == actualOutput.id &&
+          conn.targetPortId == actualInput.id) {
         return false;
       }
     }
 
     int currentConnections = getConnectionsInto(actualInput).length;
-    if (actualInput.maxConnections > 0 && currentConnections >= actualInput.maxConnections) {
+    if (actualInput.maxConnections > 0 &&
+        currentConnections >= actualInput.maxConnections) {
       return false;
     }
 
@@ -101,7 +110,8 @@ class GraphModel extends ChangeNotifier {
 
   /// Attempts to create a connection between two ports using their respective IDs and node IDs.
   /// Does check if connection is allowed via [canConnect].
-  bool createConnection(String sourceNodeId, String sourcePortId, String targetNodeId, String targetPortId) {
+  bool createConnection(String sourceNodeId, String sourcePortId,
+      String targetNodeId, String targetPortId) {
     NodeModel? sourceNode;
     for (int i = 0; i < nodeModels.length; i++) {
       if (nodeModels[i].id == sourceNodeId) sourceNode = nodeModels[i];
@@ -116,12 +126,16 @@ class GraphModel extends ChangeNotifier {
 
     PortModel? sourcePort;
     for (int i = 0; i < sourceNode.ports.length; i++) {
-      if (sourceNode.ports[i].id == sourcePortId) sourcePort = sourceNode.ports[i];
+      if (sourceNode.ports[i].id == sourcePortId) {
+        sourcePort = sourceNode.ports[i];
+      }
     }
 
     PortModel? targetPort;
     for (int i = 0; i < targetNode.ports.length; i++) {
-      if (targetNode.ports[i].id == targetPortId) targetPort = targetNode.ports[i];
+      if (targetNode.ports[i].id == targetPortId) {
+        targetPort = targetNode.ports[i];
+      }
     }
 
     if (sourcePort == null || targetPort == null) return false;
@@ -132,7 +146,8 @@ class GraphModel extends ChangeNotifier {
       String flowTargetNodeId = targetNodeId;
       String flowTargetPortId = targetPortId;
 
-      if (sourcePort.direction == PortDirection.input || targetPort.direction == PortDirection.output) {
+      if (sourcePort.direction == PortDirection.input ||
+          targetPort.direction == PortDirection.output) {
         flowSourceNodeId = targetNodeId;
         flowSourcePortId = targetPortId;
         flowTargetNodeId = sourceNodeId;
@@ -194,7 +209,8 @@ class GraphModel extends ChangeNotifier {
     List<ConnectionModel> nodeConnections = [];
     for (int i = 0; i < connectionModels.length; i++) {
       ConnectionModel connection = connectionModels[i];
-      if (connection.sourceNodeId == node.id || connection.targetNodeId == node.id) {
+      if (connection.sourceNodeId == node.id ||
+          connection.targetNodeId == node.id) {
         nodeConnections.add(connection);
       }
     }
@@ -226,6 +242,7 @@ class GraphModel extends ChangeNotifier {
 
     return newId;
   }
+
   /// Generates and returns a unique port ID string using the provided [baseName].
   String getUniquePortId(String baseName) {
     int counter = 0;
@@ -291,7 +308,7 @@ class GraphModel extends ChangeNotifier {
       Map<String, String> stringMap = {};
 
       List<String> keys = rawConn.keys.toList();
-      for(int k = 0; k < keys.length; k++) {
+      for (int k = 0; k < keys.length; k++) {
         String key = keys[k];
         stringMap[key] = rawConn[key] as String;
       }

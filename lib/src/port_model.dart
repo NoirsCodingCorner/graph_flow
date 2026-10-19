@@ -1,10 +1,4 @@
-
-
-enum PortDirection {
-  input,
-  output,
-  inout
-}
+enum PortDirection { input, output, inout }
 
 /// PortModel represents a point of connection for a Node.
 /// Ports can either be input, output or inout.
@@ -12,14 +6,19 @@ enum PortDirection {
 /// - [id]: Unique identifier of the Port.
 /// - [type]: The runtime type of the Port data.
 /// - [direction]: [PortDirection] showcasing which way a port transports data.
-class PortModel{
+class PortModel {
   int maxConnections;
   String id;
   Type type;
   PortDirection direction;
-  PortModel({required this.id, required this.type,required this.direction,this.maxConnections=1});
+  PortModel(
+      {required this.id,
+      required this.type,
+      required this.direction,
+      this.maxConnections = 1});
 
-  factory PortModel.fromJson(Map<String, Object?> json, Map<String, Type> typeRegistry) {
+  factory PortModel.fromJson(
+      Map<String, Object?> json, Map<String, Type> typeRegistry) {
     List<String> mustContain = ["id", "direction", "type"];
     for (int i = 0; i < mustContain.length; i++) {
       String cont = mustContain[i];
@@ -60,4 +59,3 @@ class PortModel{
     };
   }
 }
-

@@ -1,4 +1,3 @@
-
 import 'port_model.dart';
 
 /// NodeModel represents a node/vertices in a Graph.
@@ -9,7 +8,7 @@ import 'port_model.dart';
 class NodeModel {
   String id;
   String typeName;
-  List<PortModel>ports;
+  List<PortModel> ports;
 
   /// NodeModel represents a node/vertices in a Graph. Every
   /// NodeModel contains a unique global identifier [id], a [typeName] and a List of PortModels [ports] that
@@ -26,7 +25,8 @@ class NodeModel {
   /// Throws an [ArgumentError] if any of the required keys is missing. A
   /// value of the wrong type will cause a cast error.
 
-  factory NodeModel.fromJson(Map<String, Object?> json, Map<String, Type> typeRegistry) {
+  factory NodeModel.fromJson(
+      Map<String, Object?> json, Map<String, Type> typeRegistry) {
     List<String> mustContain = ["id", "typeName", "ports"];
     for (int i = 0; i < mustContain.length; i++) {
       String cont = mustContain[i];

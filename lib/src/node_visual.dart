@@ -120,7 +120,9 @@ class _NodeVisualState extends State<NodeVisual> {
                   ];
                 }
               } else {
-                widget.graphVisualizer.selectedNodes.value = [widget.nodeViewState];
+                widget.graphVisualizer.selectedNodes.value = [
+                  widget.nodeViewState
+                ];
               }
             },
             onPanUpdate: (details) {

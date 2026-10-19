@@ -1,4 +1,3 @@
-
 import 'dart:math';
 
 import 'package:flutter/widgets.dart';
@@ -16,37 +15,46 @@ import 'port_visual.dart';
 /// whenever the visual state changes. It also listens to the underlying
 /// [GraphModel] and keeps [nodeViewStates] in [synch] with the model's nodes
 
-class GraphVisualiser extends ChangeNotifier{
+class GraphVisualiser extends ChangeNotifier {
   GraphModel model;
 
   /// Visual representation of the nodes
-  Map<String,NodeViewState> nodeViewStates = {};
+  Map<String, NodeViewState> nodeViewStates = {};
 
   NodeViewState? currentlyHoveredNode;
   PortViewState? currentlySelectedPort;
+
   /// Temporal UI states representation
 
-  ValueNotifier<List<NodeViewState>>selectedNodes=ValueNotifier([]);
+  ValueNotifier<List<NodeViewState>> selectedNodes = ValueNotifier([]);
 
   Offset? mousePosition;
-  Offset?marqueeStartPosition;
-  Offset?marqueeEndPosition;
+  Offset? marqueeStartPosition;
+  Offset? marqueeEndPosition;
 
   /// Building method to be used for each Node that gets build.
-  Map<String,Widget Function(BuildContext context, NodeViewState state, Map<String, PortVisual> ports)> nodeBuilders={};
+  Map<
+      String,
+      Widget Function(BuildContext context, NodeViewState state,
+          Map<String, PortVisual> ports)> nodeBuilders = {};
+
   /// Building method to be used for each Port that gets build.
-  Map<Type,Widget Function(BuildContext context, PortVisual visual)> portBuilders={};
-  Widget Function(BuildContext context, NodeViewState state, Map<String, PortVisual> ports)? getNodeBuilderByType(String typeName){
+  Map<Type, Widget Function(BuildContext context, PortVisual visual)>
+      portBuilders = {};
+  Widget Function(BuildContext context, NodeViewState state,
+      Map<String, PortVisual> ports)? getNodeBuilderByType(String typeName) {
     return nodeBuilders[typeName]!;
   }
-  Widget Function(BuildContext context, PortVisual visual) getPortBuilderByType(Type type){
+
+  Widget Function(BuildContext context, PortVisual visual) getPortBuilderByType(
+      Type type) {
     return portBuilders[type]!;
   }
 
   /// GraphVisualiser manages a given Graph by handling the visual and state managing of widgets.
   /// The provided [GraphModel] ([model]) is to be seen as the actual Graph (source of truth) that this visualiser is allowed to interact with.
   /// Updates on the original are reacted upon to allow for changes of the graph without the visual editor (like programmatic updates, Agent additions etc.)
-  GraphVisualiser(this.model){
+  GraphVisualiser(this.model) {
     selectedNodes.addListener(() {
       bringToFront(selectedNodes.value);
       notifyListeners();
@@ -89,17 +97,18 @@ class GraphVisualiser extends ChangeNotifier{
 
   void updateMousePosition(Offset position) {
     mousePosition = position;
-    if(currentlySelectedPort!=null){
+    if (currentlySelectedPort != null) {
       notifyListeners();
     }
   }
 
-  void setLastHovered(NodeViewState node){
-    currentlyHoveredNode=node;
+  void setLastHovered(NodeViewState node) {
+    currentlyHoveredNode = node;
     notifyListeners();
   }
-  void removeHovered(NodeViewState node){
-    currentlyHoveredNode=null;
+
+  void removeHovered(NodeViewState node) {
+    currentlyHoveredNode = null;
     notifyListeners();
   }
 
@@ -146,64 +155,68 @@ class GraphVisualiser extends ChangeNotifier{
       notifyListeners();
     }
   }
-  void rightClicked(PortViewState clicked){
-    currentlySelectedPort=null;
+
+  void rightClicked(PortViewState clicked) {
+    currentlySelectedPort = null;
     model.deleteConnectionsOfPortVisual(clicked.model);
     notifyListeners();
   }
 
-
-  void nodePositionChanged(NodeViewState node, Offset delta ){
-    if(!selectedNodes.value.contains(node)){
-      selectedNodes.value=[node];
+  void nodePositionChanged(NodeViewState node, Offset delta) {
+    if (!selectedNodes.value.contains(node)) {
+      selectedNodes.value = [node];
     }
     //node.position.value+=delta;
 
-    for(NodeViewState selNode in selectedNodes.value){
-      selNode.position.value+=delta;
+    for (NodeViewState selNode in selectedNodes.value) {
+      selNode.position.value += delta;
     }
 
     notifyListeners();
   }
 
-  void selectInMarquee(){
-    if(marqueeStartPosition!=null&&marqueeEndPosition!=null){
-      double lowestX= min(marqueeStartPosition!.dx, marqueeEndPosition!.dx);
-      double highestX=max(marqueeStartPosition!.dx, marqueeEndPosition!.dx);
-      double lowestY= min(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
-      double highestY=max(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
+  void selectInMarquee() {
+    if (marqueeStartPosition != null && marqueeEndPosition != null) {
+      double lowestX = min(marqueeStartPosition!.dx, marqueeEndPosition!.dx);
+      double highestX = max(marqueeStartPosition!.dx, marqueeEndPosition!.dx);
+      double lowestY = min(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
+      double highestY = max(marqueeStartPosition!.dy, marqueeEndPosition!.dy);
 
-      List<NodeViewState>inside=[];
-      for(NodeViewState node in nodeViewStates.values){
-        Offset nodePos=node.position.value;
+      List<NodeViewState> inside = [];
+      for (NodeViewState node in nodeViewStates.values) {
+        Offset nodePos = node.position.value;
 
-
-        if(lowestX<nodePos.dx&&nodePos.dx<highestX&&lowestY<nodePos.dy&&nodePos.dy<highestY){
+        if (lowestX < nodePos.dx &&
+            nodePos.dx < highestX &&
+            lowestY < nodePos.dy &&
+            nodePos.dy < highestY) {
           inside.add(node);
         }
       }
-      selectedNodes.value=inside;
+      selectedNodes.value = inside;
       notifyListeners();
     }
   }
 
-  void startMarquee(Offset startingPosition){
-    marqueeStartPosition=startingPosition;
+  void startMarquee(Offset startingPosition) {
+    marqueeStartPosition = startingPosition;
   }
-  void currentMarquee(Offset endPosition){
-    marqueeEndPosition=endPosition;
+
+  void currentMarquee(Offset endPosition) {
+    marqueeEndPosition = endPosition;
     selectInMarquee();
   }
-  void endMarquee(){
-    marqueeStartPosition=null;
-    marqueeEndPosition=null;
+
+  void endMarquee() {
+    marqueeStartPosition = null;
+    marqueeEndPosition = null;
   }
 
   void bringToFront(List<NodeViewState> nodes) {
-    for(NodeViewState node in nodeViewStates.values){
+    for (NodeViewState node in nodeViewStates.values) {
       node.paintOrder = 0;
     }
-    for(NodeViewState node in nodes){
+    for (NodeViewState node in nodes) {
       node.paintOrder = 1;
     }
   }
@@ -232,6 +245,7 @@ class GraphVisualiser extends ChangeNotifier{
 
     return positions;
   }
+
   /// Restores node positions from a map produced by [toJson].
   ///
   /// Entries whose node id does not exist in [nodeViewStates] are ignored. The

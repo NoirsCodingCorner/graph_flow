@@ -18,7 +18,7 @@ class GridWidget extends StatelessWidget {
     this.lineColor = Colors.black,
     this.lineWidth = 1,
     this.backgroundColor,
-  })  : assert(gridSpacing > 0, 'gridSpacing must be greater than zero');
+  }) : assert(gridSpacing > 0, 'gridSpacing must be greater than zero');
 
   @override
   Widget build(BuildContext context) {

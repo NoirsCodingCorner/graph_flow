@@ -5,10 +5,10 @@ import 'graph_visualiser.dart';
 import 'port_model.dart';
 
 /// Represents the state for [PortVisual] containing [localOffset], the ports parent [nodeId] and the reference to [PortModel].
-class PortViewState{
+class PortViewState {
   String nodeId;
   final PortModel model;
-  final ValueNotifier<Offset?>localOffset= ValueNotifier(null);
+  final ValueNotifier<Offset?> localOffset = ValueNotifier(null);
 
   PortViewState(this.model, this.nodeId);
 }
@@ -19,7 +19,6 @@ class PortViewState{
 /// - [graphVisualizer]: the [GraphVisualiser] that is responsible to render the actual graph.
 /// - [builder]: build function for this specific type of port.
 class PortVisual extends StatefulWidget {
-
   final PortViewState portViewState;
   final GraphVisualiser graphVisualizer;
 
@@ -27,7 +26,6 @@ class PortVisual extends StatefulWidget {
 
   /// A builder function allowing for complete UI customization of the port.
   final Widget Function(BuildContext context, PortVisual visual) builder;
-
 
   /// Constructs a [PortVisual].
   const PortVisual({
@@ -57,14 +55,16 @@ class _PortVisualState extends State<PortVisual> {
 
     // CHANGE HERE: Target the RenderRepaintBoundary specifically, skipping over
     // all the intermediate Padding and Row RenderBoxes.
-    final parentNodeBox = context.findAncestorRenderObjectOfType<RenderRepaintBoundary>();
+    final parentNodeBox =
+        context.findAncestorRenderObjectOfType<RenderRepaintBoundary>();
 
     if (renderBox != null && parentNodeBox != null) {
       final centerOfPort = renderBox.size.center(Offset.zero);
 
       final calculatedLocalOffset = renderBox.localToGlobal(
         centerOfPort,
-        ancestor: parentNodeBox, // This is now mathematically locked to the Node's root
+        ancestor:
+            parentNodeBox, // This is now mathematically locked to the Node's root
       );
 
       if (widget.portViewState.localOffset.value != calculatedLocalOffset) {
@@ -73,12 +73,12 @@ class _PortVisualState extends State<PortVisual> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return NotificationListener<SizeChangedLayoutNotification>(
       onNotification: (notification) {
-        WidgetsBinding.instance.addPostFrameCallback((_) => _updateLocalOffset());
+        WidgetsBinding.instance
+            .addPostFrameCallback((_) => _updateLocalOffset());
         return true;
       },
       child: SizeChangedLayoutNotifier(
@@ -86,7 +86,7 @@ class _PortVisualState extends State<PortVisual> {
           onTap: () {
             widget.graphVisualizer.leftClicked(widget.portViewState);
           },
-          onSecondaryTap: (){
+          onSecondaryTap: () {
             widget.graphVisualizer.rightClicked(widget.portViewState);
           },
           // 1. Listen to the manager for state changes
@@ -95,7 +95,8 @@ class _PortVisualState extends State<PortVisual> {
             builder: (context, child) {
               return Container(
                 foregroundDecoration: BoxDecoration(
-                  color: widget.graphVisualizer.currentlySelectedPort == widget.portViewState
+                  color: widget.graphVisualizer.currentlySelectedPort ==
+                          widget.portViewState
                       ? Colors.black.withValues(alpha: 0.4)
                       : Colors.transparent,
                 ),

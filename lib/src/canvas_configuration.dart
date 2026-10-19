@@ -1,4 +1,3 @@
-
 import 'package:graph_flow/graph_flow.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -50,34 +49,33 @@ class CanvasLayout {
   /// - [connectionEnableDotGlow]: Enables dot glow for dots on animated connections.
   /// - [connectionShape]: Define the shape of the connection either bezier or direct.
 
-  CanvasLayout({
-    this.canvasWidth = 10000,
-    this.canvasHeight = 10000,
-    this.minScale = 0.1,
-    this.maxScale =10,
-    this.scaleFactor = 2048,
-    this.gridSpacing = 100,
-    this.gridLineColor=Colors.white,
-    this.gridBackgroundColor= Colors.grey,
-    this.gridLineWidth = 0.2,
-    this.connectionLineColor= Colors.orange,
-    this.connectionLineColorShadow=Colors.pink,
-    this.connectionDotColor=Colors.white,
-    this.connectionDotColorShadow=Colors.pinkAccent,
-    this.highLightColor=Colors.red,
-    this.connectionEnableAnimation=false,
-    this.connectionEnableLineGlow=false,
-    this.connectionEnableDotGlow=false,
-    this.connectionShape=ConnectionShape.bezier});
-
+  CanvasLayout(
+      {this.canvasWidth = 10000,
+      this.canvasHeight = 10000,
+      this.minScale = 0.1,
+      this.maxScale = 10,
+      this.scaleFactor = 2048,
+      this.gridSpacing = 100,
+      this.gridLineColor = Colors.white,
+      this.gridBackgroundColor = Colors.grey,
+      this.gridLineWidth = 0.2,
+      this.connectionLineColor = Colors.orange,
+      this.connectionLineColorShadow = Colors.pink,
+      this.connectionDotColor = Colors.white,
+      this.connectionDotColorShadow = Colors.pinkAccent,
+      this.highLightColor = Colors.red,
+      this.connectionEnableAnimation = false,
+      this.connectionEnableLineGlow = false,
+      this.connectionEnableDotGlow = false,
+      this.connectionShape = ConnectionShape.bezier});
 
   /// A darkMode default Layout with orange lines, no animation and no glow.
-  static CanvasLayout darkDefault= CanvasLayout(
-    gridBackgroundColor: Colors.grey.shade900,
-    highLightColor: Colors.yellow.shade100
-  );
+  static CanvasLayout darkDefault = CanvasLayout(
+      gridBackgroundColor: Colors.grey.shade900,
+      highLightColor: Colors.yellow.shade100);
+
   /// A darkMode default Layout with orange lines, animation, white indicators and no glow.
-  static CanvasLayout darkAnimatedDefault= CanvasLayout(
+  static CanvasLayout darkAnimatedDefault = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade900,
     gridLineColor: Colors.white,
     gridLineWidth: 0.5,
@@ -93,7 +91,7 @@ class CanvasLayout {
   );
 
   /// A darkMode default Layout with orange lines, animation, white indicators and yellow indicator glow.
-  static CanvasLayout darkAnimatedGlowDefault= CanvasLayout(
+  static CanvasLayout darkAnimatedGlowDefault = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade900,
     gridLineColor: Colors.white,
     gridLineWidth: 0.5,
@@ -109,7 +107,7 @@ class CanvasLayout {
   );
 
   /// A brightMode default Layout with orange lines, no animation, no indicators and no glow.
-  static CanvasLayout brightDefault= CanvasLayout(
+  static CanvasLayout brightDefault = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade100,
     gridLineColor: Colors.grey.shade700,
     gridLineWidth: 0.5,
@@ -125,7 +123,7 @@ class CanvasLayout {
   );
 
   /// A brightMode default Layout with orange lines, animation, brown indicators and no glow.
-  static CanvasLayout brightAnimatedDefault= CanvasLayout(
+  static CanvasLayout brightAnimatedDefault = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade100,
     gridLineColor: Colors.grey.shade700,
     gridLineWidth: 0.5,
@@ -141,7 +139,7 @@ class CanvasLayout {
   );
 
   /// A brightMode default Layout with orange lines, animation, brown indicators and gray indicator glow.
-  static CanvasLayout brightAnimatedGlowDefault= CanvasLayout(
+  static CanvasLayout brightAnimatedGlowDefault = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade100,
     gridLineColor: Colors.grey.shade700,
     gridLineWidth: 0.5,
@@ -157,7 +155,7 @@ class CanvasLayout {
   );
 
   /// A dartMode theme for futuristic neon pink canvas designs. Animated, with line glow, dot glow and white highlighting.
-  static CanvasLayout darkAnimatedNeonPink= CanvasLayout(
+  static CanvasLayout darkAnimatedNeonPink = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade900,
     gridLineColor: Colors.white,
     gridLineWidth: 0.5,
@@ -171,8 +169,9 @@ class CanvasLayout {
     connectionEnableDotGlow: true,
     connectionEnableLineGlow: true,
   );
+
   /// A dartMode theme for futuristic neon green/yellow canvas designs. Animated, with line glow, dot glow and white highlighting.
-  static CanvasLayout darkAnimatedNeonYellow= CanvasLayout(
+  static CanvasLayout darkAnimatedNeonYellow = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade900,
     gridLineColor: Colors.white,
     gridLineWidth: 0.5,
@@ -186,8 +185,9 @@ class CanvasLayout {
     connectionEnableDotGlow: true,
     connectionEnableLineGlow: true,
   );
+
   /// A dartMode theme for futuristic neon cyan canvas designs. Animated, with line glow, dot glow and white highlighting.
-  static CanvasLayout darkAnimatedNeonCyan= CanvasLayout(
+  static CanvasLayout darkAnimatedNeonCyan = CanvasLayout(
     gridBackgroundColor: Colors.grey.shade900,
     gridLineColor: Colors.white,
     gridLineWidth: 0.5,
@@ -201,9 +201,4 @@ class CanvasLayout {
     connectionEnableDotGlow: true,
     connectionEnableLineGlow: true,
   );
-
-
-
-
 }
-

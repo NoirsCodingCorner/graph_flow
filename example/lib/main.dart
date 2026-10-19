@@ -33,10 +33,7 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
   Map<String, dynamic>? savedVisualData;
 
   // The registry required for PortModel.fromJson
-  Map<String, Type> typeRegistry = {
-    "int": int,
-    "String": String,
-  };
+  Map<String, Type> typeRegistry = {"int": int, "String": String};
 
   @override
   void initState() {
@@ -79,57 +76,74 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
   }
 
   void _registerBuilders() {
-    visualiser.portBuilders[String] = (BuildContext context, PortVisual visual) {
-      return _buildPortUI(const Color(0xFF43B581));
-    };
+    visualiser.portBuilders[String] =
+        (BuildContext context, PortVisual visual) {
+          return _buildPortUI(const Color(0xFF43B581));
+        };
 
     visualiser.portBuilders[int] = (BuildContext context, PortVisual visual) {
       return _buildPortUI(const Color(0xFFFAA61A));
     };
 
-    visualiser.nodeBuilders['OutputNode'] = (BuildContext context, NodeViewState state, Map<String, PortVisual> ports) {
-      return _buildNodeUI([
-        Text(state.model.id, style: _nodeTextStyle),
-        ports.values.first
-      ]);
-    };
+    visualiser.nodeBuilders['OutputNode'] =
+        (
+          BuildContext context,
+          NodeViewState state,
+          Map<String, PortVisual> ports,
+        ) {
+          return _buildNodeUI([
+            Text(state.model.id, style: _nodeTextStyle),
+            ports.values.first,
+          ]);
+        };
 
-    visualiser.nodeBuilders['InputNode'] = (BuildContext context, NodeViewState state, Map<String, PortVisual> ports) {
-      return _buildNodeUI([
-        ports.values.first,
-        Text(state.model.id, style: _nodeTextStyle)
-      ]);
-    };
+    visualiser.nodeBuilders['InputNode'] =
+        (
+          BuildContext context,
+          NodeViewState state,
+          Map<String, PortVisual> ports,
+        ) {
+          return _buildNodeUI([
+            ports.values.first,
+            Text(state.model.id, style: _nodeTextStyle),
+          ]);
+        };
 
-    visualiser.nodeBuilders['AddInts'] = (BuildContext context, NodeViewState state, Map<String, PortVisual> ports) {
-      String nodeId = state.model.id;
-      return SizedBox(
-        width: 180,
-        height: 80,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
+    visualiser.nodeBuilders['AddInts'] =
+        (
+          BuildContext context,
+          NodeViewState state,
+          Map<String, PortVisual> ports,
+        ) {
+          String nodeId = state.model.id;
+          return SizedBox(
+            width: 180,
+            height: 80,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ports["${nodeId}_in_a"]!,
-                  ports["${nodeId}_in_b"]!,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ports["${nodeId}_in_a"]!,
+                      ports["${nodeId}_in_b"]!,
+                    ],
+                  ),
+                  Text(state.model.id, style: _nodeTextStyle),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [ports["${nodeId}_out_result"]!],
+                  ),
                 ],
               ),
-              Text(state.model.id, style: _nodeTextStyle),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ports["${nodeId}_out_result"]!,
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    };
+            ),
+          );
+        };
   }
 
   NodeModel createAddIntsNode(String uniqueId) {

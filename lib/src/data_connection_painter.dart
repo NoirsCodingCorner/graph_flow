@@ -4,10 +4,7 @@ import 'connection_model.dart';
 import 'graph_visualiser.dart';
 
 /// Defines the drawing type of the connection. Either [bezier] or [direct] supported.
-enum ConnectionShape {
-  direct,
-  bezier
-}
+enum ConnectionShape { direct, bezier }
 
 /// A high-performance painter that draws connections and animated dots.
 /// Uses the Visualizer to determine selected and highlighting aspects of its connections.
@@ -40,19 +37,21 @@ class DataConnectionPainter extends CustomPainter {
 
   // Conditionally bind the animation. If false, the canvas only repaints when nodes move/connect.
   DataConnectionPainter(
-      this.visualiser,
-      this.animation, {
-        required this.lineColor,
-        this.lineColorShadow = Colors.black,
-        this.dotColor = Colors.white,
-        this.dotColorShadow = Colors.black,
-        this.highLightColor=Colors.black,
-        this.enableAnimation = true,
-        this.enableLineGlow = true,
-        this.enableDotGlow = true,
-        this.connectionShape = ConnectionShape.bezier,
-      }) : super(repaint: enableAnimation ? Listenable.merge([visualiser, animation]) : visualiser) {
-
+    this.visualiser,
+    this.animation, {
+    required this.lineColor,
+    this.lineColorShadow = Colors.black,
+    this.dotColor = Colors.white,
+    this.dotColorShadow = Colors.black,
+    this.highLightColor = Colors.black,
+    this.enableAnimation = true,
+    this.enableLineGlow = true,
+    this.enableDotGlow = true,
+    this.connectionShape = ConnectionShape.bezier,
+  }) : super(
+            repaint: enableAnimation
+                ? Listenable.merge([visualiser, animation])
+                : visualiser) {
     // Initialize core paints
     _linePaint = Paint()
       ..color = lineColor
@@ -100,7 +99,8 @@ class DataConnectionPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // --- 1. Draw established connections ---
-    List<ConnectionModel> hoveredConnections=visualiser.model.getConnectionsOfNode(visualiser.currentlyHoveredNode?.model);
+    List<ConnectionModel> hoveredConnections = visualiser.model
+        .getConnectionsOfNode(visualiser.currentlyHoveredNode?.model);
     for (ConnectionModel connection in visualiser.model.connectionModels) {
       Offset? startOffset = visualiser.getAbsolutePortPosition(
           connection.sourceNodeId, connection.sourcePortId);
@@ -108,8 +108,9 @@ class DataConnectionPainter extends CustomPainter {
       Offset? endOffset = visualiser.getAbsolutePortPosition(
           connection.targetNodeId, connection.targetPortId);
 
-
-      if (startOffset != null && endOffset != null && !hoveredConnections.contains(connection)) {
+      if (startOffset != null &&
+          endOffset != null &&
+          !hoveredConnections.contains(connection)) {
         _drawConnectionPath(canvas, startOffset, endOffset, true, false);
       }
     }
@@ -125,10 +126,9 @@ class DataConnectionPainter extends CustomPainter {
       }
     }
 
-
-
     // --- 2. Draw live preview connection ---
-    if (visualiser.currentlySelectedPort != null && visualiser.mousePosition != null) {
+    if (visualiser.currentlySelectedPort != null &&
+        visualiser.mousePosition != null) {
       Offset? startOffset = visualiser.getAbsolutePortPosition(
           visualiser.currentlySelectedPort!.nodeId,
           visualiser.currentlySelectedPort!.model.id);
@@ -136,13 +136,15 @@ class DataConnectionPainter extends CustomPainter {
       if (startOffset != null) {
         // Draw the path using the mouse position as the end target.
         // We set drawDots to false so the preview line is just a solid beam.
-        _drawConnectionPath(canvas, startOffset, visualiser.mousePosition!, false,true);
+        _drawConnectionPath(
+            canvas, startOffset, visualiser.mousePosition!, false, true);
       }
     }
   }
 
   /// Helper method to keep the paint function clean
-  void _drawConnectionPath(Canvas canvas, Offset startOffset, Offset endOffset, bool drawDots, bool highlight) {
+  void _drawConnectionPath(Canvas canvas, Offset startOffset, Offset endOffset,
+      bool drawDots, bool highlight) {
     // FIX: Prevent zero-dimension bounding boxes which cause Flutter to drop blur filters.
     double safeEndX = endOffset.dx;
     double safeEndY = endOffset.dy;
@@ -155,10 +157,7 @@ class DataConnectionPainter extends CustomPainter {
 
     if (connectionShape == ConnectionShape.bezier) {
       double midX = (startOffset.dx + safeEndX) / 2;
-      path.cubicTo(
-          midX, startOffset.dy,
-          midX, safeEndY,
-          safeEndX, safeEndY);
+      path.cubicTo(midX, startOffset.dy, midX, safeEndY, safeEndX, safeEndY);
     } else if (connectionShape == ConnectionShape.direct) {
       path.lineTo(safeEndX, safeEndY);
     }
@@ -169,12 +168,11 @@ class DataConnectionPainter extends CustomPainter {
       canvas.drawPath(path, _glowPaintInner);
     }
 
-    if(highlight){
+    if (highlight) {
       canvas.drawPath(path, _lineHighlightPaint);
-    }else{
+    } else {
       canvas.drawPath(path, _linePaint);
     }
-
 
     // We can still use the exact original offsets for the circles
     canvas.drawCircle(startOffset, 4.0, _endpointPaint);
@@ -191,7 +189,8 @@ class DataConnectionPainter extends CustomPainter {
           double dotProgress = (animation.value + (i / dotCount)) % 1.0;
           double distanceAlongPath = dotProgress * pathLength;
 
-          final Tangent? tangent = metric.getTangentForOffset(distanceAlongPath);
+          final Tangent? tangent =
+              metric.getTangentForOffset(distanceAlongPath);
           if (tangent != null) {
             if (enableDotGlow) {
               // Draw layered circles instead of blurred circles
@@ -205,7 +204,6 @@ class DataConnectionPainter extends CustomPainter {
       }
     }
   }
-
 
   @override
   bool shouldRepaint(covariant DataConnectionPainter oldDelegate) {

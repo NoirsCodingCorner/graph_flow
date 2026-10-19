@@ -75,8 +75,8 @@ class _GraphCanvasState extends State<GraphCanvas>
           child: ValueListenableBuilder(
             valueListenable: canPan,
             builder: (context, pan, child) {
-
-              List<NodeViewState> sortedNodes = widget.visualiser.nodeViewStates.values.toList();
+              List<NodeViewState> sortedNodes =
+                  widget.visualiser.nodeViewStates.values.toList();
               sortedNodes.sort((NodeViewState a, NodeViewState b) {
                 return a.paintOrder.compareTo(b.paintOrder);
               });
@@ -88,7 +88,8 @@ class _GraphCanvasState extends State<GraphCanvas>
                   key: ValueKey(nodeState.model.id),
                   nodeViewState: nodeState,
                   graphVisualizer: widget.visualiser,
-                  builder: widget.visualiser.getNodeBuilderByType(nodeState.model.typeName)!,
+                  builder: widget.visualiser
+                      .getNodeBuilderByType(nodeState.model.typeName)!,
                 );
                 nodeWidgets.add(nodeWidget);
               }
@@ -170,8 +171,8 @@ class _GraphCanvasState extends State<GraphCanvas>
                                     .canvasLayout.connectionEnableLineGlow,
                                 enableDotGlow:
                                     widget.canvasLayout.connectionEnableDotGlow,
-                                connectionShape: widget
-                                    .canvasLayout.connectionShape,
+                                connectionShape:
+                                    widget.canvasLayout.connectionShape,
                               ),
                             ),
                           ),
