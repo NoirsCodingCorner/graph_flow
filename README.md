@@ -1,275 +1,255 @@
-
-
-# GraphFlow
 <p align="center">
-<img src="https://raw.githubusercontent.com/NoirsCodingCorner/graph_flow/master/doc/logo.png" alt="Graph Flow Logo" width="200">
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/logo.png?raw=true" alt="Graph Flow Logo" width="500">
 </p>
 
-You can adjust width="200" to change the display size.
+<h3 align="center">A fast, decoupled, and highly customizable node-based editor for Flutter.</h3>
 
-My recommendation: Use the absolute GitHub URL and test it by opening the URL directly in your browser. Make sure doc/logo.png is committed to your public repository and available on the selected branch.
+<p align="center">
+  <a href="https://pub.dev/packages/graph_flow"><img src="https://img.shields.io/pub/v/graph_flow" alt="Pub Version"></a>
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-Compatible-brightgreen.svg" alt="Flutter Platform"></a>
+  <a href="https://github.com/NoirsCodingCorner/graph_flow/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+</p>
 
-GraphFlow is a powerful and flexible Flutter package for building interactive node-based editors. It provides a highly customizable canvas with support for grid backgrounds, dynamic node positioning, and a range of connection rendering styles with advanced pan & zoom functionalities. Build flowcharts, diagram editors, visual programming environments, and more – all with ease!
+<p align="center">
+  <img src="doc/selection.gif" alt="GraphFlow Selection & Panning" width="800">
+</p>
 
-[![Pub Version](https://img.shields.io/pub/v/graph_flow)](https://pub.dev/packages/graph_flow)  
-[![Flutter Platform](https://img.shields.io/badge/Flutter-Compatible-brightgreen.svg)](https://flutter.dev)
+**GraphFlow** is a powerful, high-performance Flutter package for building interactive node-based editors. By cleanly decoupling the underlying graph data structure from the interactive rendering layer, it provides a highly customizable foundation for building professional visual programming environments, state machine editors, flowcharts, and more.
 
-### Example Usecase:
+---
 
-![graph_flow_pretty](https://github.com/user-attachments/assets/0dc3679e-3451-4f15-b243-e3071b4d5f75?raw=true)
+## Core Features
 
-## Features
+- **Decoupled Architecture:**
+  A clean separation between data logic (`GraphModel`) and the interactive UI (`GraphVisualiser`). Easily manipulate the graph programmatically, hook up AI agents, or let users drive via the canvas.
 
-- **Interactive Node Editor:**  
-  Add, remove, and reposition node cards on a highly interactive canvas.
-- **Dynamic Connections:**  
-  Draw connections between nodes using customizable styles such as Bezier curves, straight lines, and more.
-- **Advanced Pan & Zoom:**  
-  Navigate your canvas easily using built-in support for panning and zooming with `InteractiveViewer`.
-- **Customizable Grid Background:**  
-  Configure grid spacing, colors, and line widths to suit your visual style.
-- **Scene Persistence:**  
-  Save and load entire scenes—including nodes, connections, and canvas offsets—via JSON for easy sharing and persistence.
-- **Flexible Event Handling:**  
-  Customize interactions with support for mouse and gesture callbacks.
-- **Easy Integration:**  
-  Extend the package with custom painters and node factories for bespoke node behaviors.
+- **High-Performance Rendering:**
+  Smooth 60FPS drawing even in dense graphs. Connections feature zero-allocation frame painting and filter-free layered glows to keep your app running fast.
 
-## Example of a customized Editor
-![Gifshowcase](https://github.com/user-attachments/assets/9eefc701-0c1b-4a32-93d4-1acc1d1f4a9c?raw=true)
+- **Advanced Pan, Zoom & Interactivity:**
+  Navigate your canvas easily with native `InteractiveViewer` support. Includes multi-node marquee selection (`Shift` + Drag), automatic Z-ordering for active selections, and live-tracking preview beams for port connections.
 
+- **Smart Connection Validation:**
+  Enforces structural integrity out-of-the-box. The library automatically validates port directions (input/output), prevents self-loops, respects maximum connection limits, and strictly checks data types against an allowed connections registry.
+
+- **Rich Visual Customization:**
+  Configure grid spacing, colors, and line widths. Choose between Bezier curves or straight lines, and easily toggle animated directional flow dots, line glows, and node highlighting. Includes 9 built-in themes (dark, bright, and futuristic neon).
+
+- **Type-Driven UI Builders:**
+  Extend the library by registering custom widget builders mapped to specific node and port types. Build bespoke, highly customized node cards that fit your exact domain.
+
+- **Independent Serialization:**
+  Save, share, and load entire scenes. Graph topologies (nodes and connections) and visual canvas layouts (X/Y coordinates) are serialized to and from JSON independently for robust state persistence.
+
+---
+
+## See it in Action
+
+### Connect Nodes via Ports
+Drag live-tracking preview beams between ports with automatic type and direction checking.
+<p align="center">
+  <img src="doc/connect.gif" alt="GraphFlow Node Connections" width="800">
+</p>
+
+### Smooth Zoom & Pan
+Navigate massive workspaces effortlessly with infinite-feel grid scaling and marquee selection.
+<p align="center">
+  <img src="doc/zoom.gif" alt="GraphFlow Zoom and Pan" width="800">
+</p>
+
+### Build Complex Networks
+Connect nodes with custom routing rules to build full visual pipelines.
+<p align="center">
+  <img src="doc/connect.gif" alt="GraphFlow Complex Networks" width="800">
+</p>
+
+---
 
 ## Getting Started
 
 ### Installation
 
-Add GraphFlow to your Flutter project's `pubspec.yaml` file:
+Add `graph_flow` to your project's `pubspec.yaml`:
 
 ```yaml
 dependencies:
   flutter:
     sdk: flutter
-  graph_flow: ^0.1.0
+  graph_flow: ^1.0.0
 ```
 
-Then run:
+Then fetch the package:
 
 ```bash
 flutter pub get
 ```
 
-### Basic Usage
+---
 
-Below is a simple example that demonstrates how to integrate GraphFlow into your Flutter app. This sample creates a manager, adds two nodes, and displays the canvas with a grid and connection layer.
+## Basic Tutorial
 
-```dart
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:graph_flow/graph_flow.dart'; // Use your package's public API.
-import 'package:graph_flow/src/connection_painter.dart';
-import 'package:graph_flow/src/example_node.dart';
-import 'package:graph_flow/src/manager.dart';
-import 'package:graph_flow/src/node_canvas.dart';
+### 1. Create the Graph 
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  static int _uniqueCounter = 0;
-  
-  static String generateUniqueId() {
-    _uniqueCounter++; 
-    // Create a unique id combining a timestamp and counter.
-    return '${DateTime.now().millisecondsSinceEpoch}-$_uniqueCounter';
-  }
-  
-  const MyApp({Key? key}) : super(key: key);
-  
-  String getNewID() => generateUniqueId();
-  
-  @override
-  Widget build(BuildContext context) {
-    Manager manager = Manager(getNewID: getNewID);
-    // Register a node type factory.
-    manager.nodeFactories['ExampleNode'] = ExampleNode.fromJson;
-    // Add example nodes to the manager.
-    manager.addNode(ExampleNode(manager: manager, id: getNewID()));
-    manager.addNode(ExampleNode(manager: manager, id: getNewID()));
-    
-    return MaterialApp(
-      title: 'GraphFlow Demo',
-      home: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            // Main canvas with grid and nodes.
-            CanvasPage(
-              manager: manager, 
-              gridSpacing: 10, 
-              connectionPainter: ConnectionPainter(
-                manager, 
-                drawingType: ConnectionDrawingType.bezier,
-              ),
-            ),
-            // UI controls to print or input JSON.
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Builder(
-                builder: (context) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Map<String, dynamic> json = manager.saveSceneToJson();
-                        print(
-                          const JsonEncoder.withIndent('  ').convert(json),
-                        );
-                      },
-                      icon: const Icon(Icons.print, color: Colors.white),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        final TextEditingController controller =
-                            TextEditingController();
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Input JSON'),
-                              content: TextField(
-                                controller: controller,
-                                maxLines: null,
-                                decoration: const InputDecoration(
-                                  hintText: 'Enter JSON here',
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(),
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    final inputJson = jsonDecode(controller.text);
-                                    manager.loadSceneFromJson(inputJson);
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.input, color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-```
-
-### Advanced Usage
-
-GraphFlow is fully extensible. You can provide your own custom connection painters, override default callbacks for mouse and gesture events, or extend node card functionalities. For example, to use a custom connection painter:
+Creates the underlying graph object. A graph consists of **Nodes**, **Connections**, and **Ports** (which belong to nodes and govern their interactions).
 
 ```dart
-class MyCustomPainter extends CustomPainter {
-  final Manager manager;
-
-  MyCustomPainter(this.manager);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    // Your custom connection rendering logic.
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
-
-// Usage in CanvasPage:
-CanvasPage(
-  manager: manager,
-  connectionPainter: MyCustomPainter(manager),
+GraphModel model = GraphModel(
+  allowedConnections: {
+    String: [String, dynamic],
+    int: [int, double, dynamic],
+  },
 );
 ```
-<h2 style="display: flex; align-items: center; gap: 8px;">
-  <img src="https://github.com/user-attachments/assets/8ade4ad5-ea95-491c-95e5-989b572a844a?raw=true" alt="Canvas Icon" width="36" height="36" />
-  <span>Customizable Features of CanvasPage</span>
-  
-</h2>
 
-- **Manager**  
-  - The required `Manager` instance controls nodes, connection points, and overall scene state.
+**`PortModel`**: Nodes contain ports. Each port has an ID, a data type, a direction (`input`, `output`, or `both`), and an optional limit on the maximum number of connections it can accept.
+```dart
+PortModel inputA = PortModel(
+  id: "id_1_input",
+  type: int,
+  direction: PortDirection.input,
+  maxConnections: 1,
+);
+```
 
-- **Custom Connection Painter**  
-  - Specify a custom painter via the `connectionPainter` parameter.  
-  - If not provided, the default `ConnectionPainter` is used to render connection lines.
+**`NodeModel`**: Each node contains an ID, a type name, and a list of ports that manage interactions with other nodes.
+```dart
+NodeModel node = NodeModel(
+  id: "id_1",
+  typeName: "addNode",
+  ports: [inputA],
+);
+```
 
-- **Mouse Region Callbacks**  
-  - `onMouseEnter`: Triggered when the mouse enters the canvas area.  
-  - `onMouseHover`: Updates the manager’s mouse position and handles hover events.  
-  - `onMouseExit`: Triggered when the mouse leaves the canvas area.
+**`ConnectionModel`**: Holds the source node and port IDs as well as the target node and port IDs.
+```dart
+ConnectionModel newConnection = ConnectionModel(
+  sourceNodeId: "outputNode",
+  sourcePortId: "outputNodePort1",
+  targetNodeId: "inputNode",
+  targetPortId: "inputNodePort1",
+);
+```
+> **Note:** Connections are typically created using `model.createConnection()`, which first validates whether all conditions for the connection are met. It returns `true` if successful, or `false` otherwise.
 
-- **Gesture Detector Callbacks**  
-  - `onTapDown`, `onTapUp`, `onTap`: Customize how tap events are handled.  
-  - `onLongPress`: Customize long-press behavior.  
-  - `onPanStart`, `onPanUpdate`, `onPanEnd`: Handle drag (panning) events to move nodes or navigate the canvas.
+### 2. Show your Graph
 
-- **Canvas Dimensions**  
-  - `canvasWidth` & `canvasHeight`: Define the size of the canvas.
+Visualising a `GraphModel` is straightforward. To manage visual interactions and node positions, create a `GraphVisualiser` and pass it your model:
 
-- **Zoom & Pan Settings**  
-  - `maxZoom` & `minZoom`: Control the zooming capabilities of the canvas.  
-  - `scaleFactor`: Factor applied to the scaling transformation.
+```dart
+GraphVisualiser visualiser = GraphVisualiser(model);
+```
 
-- **Grid Settings**  
-  - `gridSpacing`: Specifies the distance between grid lines.  
-  - `lineColor`: Defines the color of the grid lines.  
-  - `lineWidth`: Sets the stroke width of the grid lines.  
-  - `overflowSpacing`: Adds extra spacing beyond the widget’s bounds to ensure complete grid coverage.
+To render it inside your application, pass the visualiser to a `GraphCanvas` widget and specify your desired `CanvasLayout` style:
 
- <h2 style="display: flex; align-items: center; gap: 8px;">
-  <img src="https://github.com/user-attachments/assets/26ff7125-cf7a-4a6b-8183-367b07cbe63b?raw=true" alt="connectionIcon" width="36" height="36" />
-  <span>Customizable Features of ConnectionPainter</span>
-</h2>
-- **Mouse Line Activation:**  
-  Toggle the visibility of a dynamic connection line from the selected connection point to the current mouse position using the `mouseLineActive` flag.
+```dart
+GraphCanvas(
+  visualiser: visualiser,
+  canvasLayout: CanvasLayout.darkAnimatedNeonCyan,
+)
+```
 
-- **Drawing Type:**  
-  Choose from a variety of connection drawing styles via the `drawingType` parameter:
-  - `bezier` – Draw a bezier curve with vertical control points.
-  - `straightLine` – Draw a simple straight line.
-  - `verticalThenHorizontal` – Draw a line going vertically then horizontally.
-  - `halfHorizontalThenVertical` – Draw a path going half horizontally then vertically.
-  - `halfVerticalThenHorizontal` – Draw a path going half vertically then horizontally.
-  - `bezierHorizontalThenVertical` – Draw a bezier curve transitioning horizontally then vertically.
+That's it! The graph is now rendered interactively, and the UI will automatically update whenever the underlying `GraphModel` changes.
 
-- **Mouse Line Color:**  
-  Customize the color of the mouse-tracking connection line through the `mouseLineColor` property.
+### 3. Save & Load Support
 
-- **Line Thickness:**  
-  Adjust the stroke width of the connection lines with the `lineThickness` setting.
+To save or export a graph's topology, convert the model into standard JSON:
+```dart
+Map<String, dynamic>? savedGraphData = model.toJson();
+```
 
-- **Endpoint Radius:**  
-  Specify the radius for the endpoint dots on connection points using the `endpointRadius`.
+Additionally, visual attributes (such as node X/Y positions on the canvas) can be saved independently:
+```dart
+Map<String, dynamic>? savedVisualData = visualiser.toJson();
+```
 
-Leverage these properties to fine-tune the visual style and interaction behavior of your connection lines for building highly interactive node-based editors.
+To restore your state, load the JSON maps back into your model and visualiser:
+```dart
+model.loadFromJson(savedGraphData!, typeRegistry);
+visualiser.loadPositions(savedVisualData!);
+```
 
+---
 
+## Canvas Layouts
 
+While you have full control over how `NodeVisual` and `PortVisual` widgets look, the canvas grid, connection curves, glows, and flow animations are controlled by `CanvasLayout`.
 
-## Contributing
+Out of the box, **GraphFlow** ships with 9 ready-to-use presets:
 
-Contributions are very welcome and will be reviewed in sight!
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="doc/brightDefault.png" alt="brightDefault" width="250"><br>
+      <code>brightDefault</code>
+    </td>
+    <td align="center">
+      <img src="doc/brightAnimatedDefault.png" alt="brightAnimatedDefault" width="250"><br>
+      <code>brightAnimatedDefault</code>
+    </td>
+    <td align="center">
+      <img src="doc/brightAnimatedGlowDefault.png" alt="brightAnimatedGlowDefault" width="250"><br>
+      <code>brightAnimatedGlowDefault</code>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="doc/darkDefault.png" alt="darkDefault" width="250"><br>
+      <code>darkDefault</code>
+    </td>
+    <td align="center">
+      <img src="doc/darkAnimatedDefault.png" alt="darkAnimatedDefault" width="250"><br>
+      <code>darkAnimatedDefault</code>
+    </td>
+    <td align="center">
+      <img src="doc/darkAnimatedGlowDefault.png" alt="darkAnimatedGlowDefault" width="250"><br>
+      <code>darkAnimatedGlowDefault</code>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="doc/darkAnimatedNeonCyan.png" alt="darkAnimatedNeonCyan" width="250"><br>
+      <code>darkAnimatedNeonCyan</code>
+    </td>
+    <td align="center">
+      <img src="doc/darkAnimatedNeonPink.png" alt="darkAnimatedNeonPink" width="250"><br>
+      <code>darkAnimatedNeonPink</code>
+    </td>
+    <td align="center">
+      <img src="doc/darkAnimatedNeonYellow.png" alt="darkAnimatedNeonYellow" width="250"><br>
+      <code>darkAnimatedNeonYellow</code>
+    </td>
+  </tr>
+</table>
+
+Want to build your own look? Instantiate a custom `CanvasLayout` and tweak everything from grid dimensions to neon shadow colors:
+```dart
+CanvasLayout(
+  canvasWidth: 10000,
+  canvasHeight: 10000,
+  minScale: 0.1,
+  maxScale: 10,
+  scaleFactor: 2048,
+  gridSpacing: 100,
+  gridLineColor: Colors.white,
+  gridBackgroundColor: Colors.grey,
+  gridLineWidth: 0.2,
+  connectionLineColor: Colors.orange,
+  connectionLineColorShadow: Colors.pink,
+  connectionDotColor: Colors.white,
+  connectionDotColorShadow: Colors.pinkAccent,
+  highLightColor: Colors.red,
+  connectionEnableAnimation: false,
+  connectionEnableLineGlow: false,
+  connectionEnableDotGlow: false,
+  connectionShape: ConnectionShape.bezier,
+);
+```
+
+---
+
+## Contributing <3
+
+Contributions are very welcome and will be reviewed promptly!
 
 ## License
 
@@ -278,10 +258,6 @@ GraphFlow is licensed under the MIT License. See the [LICENSE](https://github.co
 ## Outlook
 
 GraphFlow is currently fresh in development.
-If you have any comments or wishes for this library feel free to contact me over the github or just leave a note in the flutter discord channel.
-
-Plans: 
-- **Data Pipes**: It is planned to add runtime data passing into the connections themselves to allow easier usage during runtime
-- **More customizable Events**: Events like creation, deletion and dragging of connections is to be made fully costumizable
+If you have any comments, feedback, or feature wishes for this library, feel free to open an issue on GitHub or leave a note in the Flutter Discord channel.
 
 Thank you all for using my library <3

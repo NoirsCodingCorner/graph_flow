@@ -13,6 +13,10 @@ class GraphEditorApp extends StatefulWidget {
 }
 
 class _GraphEditorAppState extends State<GraphEditorApp> {
+
+  // Define the actual Graph with all allowed connection type directions.
+  // In this example it allows connection from String (output) to String or dynamic and
+  // int -> int, double, or dynamic input portsö
   GraphModel model = GraphModel(
     allowedConnections: {
       String: [String, dynamic],
@@ -82,7 +86,7 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
         };
 
     visualiser.portBuilders[int] = (BuildContext context, PortVisual visual) {
-      return _buildPortUI(const Color(0xFFFAA61A));
+      return _buildPortUI(const Color(0xFF48D9D9));
     };
 
     visualiser.nodeBuilders['OutputNode'] =
@@ -185,7 +189,7 @@ class _GraphEditorAppState extends State<GraphEditorApp> {
           children: [
             GraphCanvas(
               visualiser: visualiser,
-              canvasLayout: CanvasLayout.darkAnimatedNeonYellow,
+              canvasLayout: CanvasLayout.darkAnimatedNeonCyan,
             ),
             Positioned(
               top: 20,
