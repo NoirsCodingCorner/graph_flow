@@ -118,6 +118,7 @@ NodeModel node = NodeModel(
   typeName: "addNode",
   ports: [inputA],
 );
+model.addNode(node);
 ```
 
 **`ConnectionModel`**: Holds the source node and port IDs as well as the target node and port IDs.
@@ -130,8 +131,9 @@ ConnectionModel newConnection = ConnectionModel(
 );
 ```
 > **Note:** Connections are typically created using `model.createConnection()`, which first validates whether all conditions for the connection are met. It returns `true` if successful, or `false` otherwise.
+---
 
-### 2. Show your Graph
+## 2. Show your Graph
 
 Visualising a `GraphModel` is straightforward. To manage visual interactions and node positions, create a `GraphVisualiser` and pass it your model:
 
@@ -148,7 +150,72 @@ GraphCanvas(
 )
 ```
 
+In order to tell the Visualizer how it should build the NodeVisuals, it is necessary to provide it with Builders for the different nodeTypes we 
+expect it to find.
+For every type of node the following has to be added:
+
+```dart
+visualiser.nodeBuilders['OutputNode'] =
+  (
+    BuildContext context,
+    NodeViewState state,
+    Map<String, PortVisual> ports,
+    ) {
+    return YourNodeWidget(ports, ...);
+  };
+```
+
+The same needs to be done for the different types of ports:
+
+```dart
+visualiser.portBuilders[String] =
+(BuildContext context, PortVisual visual) {
+  return YourNodeWidet(...);
+};
+```
+
+One simple implementation of NodeVisual and PortVisual to rebuild the documentations style which is designed to be ultra simple:
+
+```dart
+
+  Widget _buildNodeUI(List<Widget> children) {
+    return SizedBox(
+      width: 140,
+      height: 60,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: children,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPortUI(Color color) {
+    return Container(
+      width: 16,
+      height: 16,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color,
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.5),
+            blurRadius: 6,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+    );
+
+```
+
+
 That's it! The graph is now rendered interactively, and the UI will automatically update whenever the underlying `GraphModel` changes.
+
+---
 
 ### 3. Save & Load Support
 
@@ -164,6 +231,14 @@ Map<String, dynamic>? savedVisualData = visualiser.toJson();
 
 To restore your state, load the JSON maps back into your model and visualiser:
 ```dart
+// To load data back in, you must provide a type registry so the JSON 
+// strings can be mapped back to actual Dart Types.
+Map<String, Type> typeRegistry = {
+  "int": int,
+  "String": String,
+  "dynamic": dynamic
+};
+
 model.loadFromJson(savedGraphData!, typeRegistry);
 visualiser.loadPositions(savedVisualData!);
 ```
