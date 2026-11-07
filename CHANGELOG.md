@@ -10,3 +10,6 @@
 
 ## 1.0.0
 * Big overhaul, performance, visuaL and usability greatly improved
+
+## 1.0.1
+* Url fix applied to not loaded doc images
