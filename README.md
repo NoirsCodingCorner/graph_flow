@@ -53,7 +53,7 @@ Drag live-tracking preview beams between ports with automatic type and direction
 ### Smooth Zoom & Pan
 Navigate massive workspaces effortlessly with infinite-feel grid scaling and marquee selection.
 <p align="center">
-  <img src="doc/zoom.gif" alt="GraphFlow Zoom and Pan" width="800">
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/zoom.gif?raw=true" alt="GraphFlow Zoom and Pan" width="800">
 </p>
 
 ### Build Complex Networks
@@ -253,43 +253,43 @@ Out of the box, **GraphFlow** ships with 9 ready-to-use presets:
 <table align="center">
   <tr>
     <td align="center">
-      <img src="doc/bright_default.png" alt="brightDefault" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/bright_default.png?raw=true" alt="brightDefault" width="250"><br>
       <code>brightDefault</code>
     </td>
     <td align="center">
-      <img src="doc/bright_animated_default.png" alt="brightAnimatedDefault" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/bright_animated_default.png?raw=true" alt="brightAnimatedDefault" width="250"><br>
       <code>brightAnimatedDefault</code>
     </td>
     <td align="center">
-      <img src="doc/bright_animated_glow_default.png" alt="brightAnimatedGlowDefault" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/bright_animated_glow_default.png?raw=true" alt="brightAnimatedGlowDefault" width="250"><br>
       <code>brightAnimatedGlowDefault</code>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="doc/dark_default.png" alt="darkDefault" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/dark_default.png?raw=true" alt="darkDefault" width="250"><br>
       <code>darkDefault</code>
     </td>
     <td align="center">
-      <img src="doc/dark_animated_default.png" alt="darkAnimatedDefault" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/dark_animated_default.png?raw=true" alt="darkAnimatedDefault" width="250"><br>
       <code>darkAnimatedDefault</code>
     </td>
     <td align="center">
-      <img src="doc/dark_animated_glow_default.png" alt="darkAnimatedGlowDefault" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/dark_animated_glow_default.png?raw=true" alt="darkAnimatedGlowDefault" width="250"><br>
       <code>darkAnimatedGlowDefault</code>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="doc/dark_animated_neon_cyan.png" alt="darkAnimatedNeonCyan" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/dark_animated_neon_cyan.png?raw=true" alt="darkAnimatedNeonCyan" width="250"><br>
       <code>darkAnimatedNeonCyan</code>
     </td>
     <td align="center">
-      <img src="doc/dark_animated_neon_pink.png" alt="darkAnimatedNeonPink" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/dark_animated_neon_pink.png?raw=true" alt="darkAnimatedNeonPink" width="250"><br>
       <code>darkAnimatedNeonPink</code>
     </td>
     <td align="center">
-      <img src="doc/dark_animated_neon_yellow.png" alt="darkAnimatedNeonYellow" width="250"><br>
+      <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/dark_animated_neon_yellow.png?raw=true" alt="darkAnimatedNeonYellow" width="250"><br>
       <code>darkAnimatedNeonYellow</code>
     </td>
   </tr>
