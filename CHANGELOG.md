@@ -7,3 +7,6 @@
 ## 0.1.2
 
 * Small performance update
+
+## 1.0.0
+* Big overhaul, performance, visuaL and usability greatly improved
