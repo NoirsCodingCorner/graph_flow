@@ -17,7 +17,6 @@
 **GraphFlow** is a powerful, high-performance Flutter package for building interactive node-based editors. By cleanly decoupling the underlying graph data structure from the interactive rendering layer, it provides a highly customizable foundation for building professional visual programming environments, state machine editors, flowcharts, and more.
 
 ---
-
 ## Core Features
 
 - **Decoupled Architecture:**
@@ -254,43 +253,43 @@ Out of the box, **GraphFlow** ships with 9 ready-to-use presets:
 <table align="center">
   <tr>
     <td align="center">
-      <img src="doc/brightDefault.png" alt="brightDefault" width="250"><br>
+      <img src="doc/bright_default.png" alt="brightDefault" width="250"><br>
       <code>brightDefault</code>
     </td>
     <td align="center">
-      <img src="doc/brightAnimatedDefault.png" alt="brightAnimatedDefault" width="250"><br>
+      <img src="doc/bright_animated_default.png" alt="brightAnimatedDefault" width="250"><br>
       <code>brightAnimatedDefault</code>
     </td>
     <td align="center">
-      <img src="doc/brightAnimatedGlowDefault.png" alt="brightAnimatedGlowDefault" width="250"><br>
+      <img src="doc/bright_animated_glow_default.png" alt="brightAnimatedGlowDefault" width="250"><br>
       <code>brightAnimatedGlowDefault</code>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="doc/darkDefault.png" alt="darkDefault" width="250"><br>
+      <img src="doc/dark_default.png" alt="darkDefault" width="250"><br>
       <code>darkDefault</code>
     </td>
     <td align="center">
-      <img src="doc/darkAnimatedDefault.png" alt="darkAnimatedDefault" width="250"><br>
+      <img src="doc/dark_animated_default.png" alt="darkAnimatedDefault" width="250"><br>
       <code>darkAnimatedDefault</code>
     </td>
     <td align="center">
-      <img src="doc/darkAnimatedGlowDefault.png" alt="darkAnimatedGlowDefault" width="250"><br>
+      <img src="doc/dark_animated_glow_default.png" alt="darkAnimatedGlowDefault" width="250"><br>
       <code>darkAnimatedGlowDefault</code>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="doc/darkAnimatedNeonCyan.png" alt="darkAnimatedNeonCyan" width="250"><br>
+      <img src="doc/dark_animated_neon_cyan.png" alt="darkAnimatedNeonCyan" width="250"><br>
       <code>darkAnimatedNeonCyan</code>
     </td>
     <td align="center">
-      <img src="doc/darkAnimatedNeonPink.png" alt="darkAnimatedNeonPink" width="250"><br>
+      <img src="doc/dark_animated_neon_pink.png" alt="darkAnimatedNeonPink" width="250"><br>
       <code>darkAnimatedNeonPink</code>
     </td>
     <td align="center">
-      <img src="doc/darkAnimatedNeonYellow.png" alt="darkAnimatedNeonYellow" width="250"><br>
+      <img src="doc/dark_animated_neon_yellow.png" alt="darkAnimatedNeonYellow" width="250"><br>
       <code>darkAnimatedNeonYellow</code>
     </td>
   </tr>
