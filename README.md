@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="doc/selection.gif" alt="GraphFlow Selection & Panning" width="800">
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/selection.gif?raw=true" alt="GraphFlow Selection & Panning" width="800">
 </p>
 
 **GraphFlow** is a powerful, high-performance Flutter package for building interactive node-based editors. By cleanly decoupling the underlying graph data structure from the interactive rendering layer, it provides a highly customizable foundation for building professional visual programming environments, state machine editors, flowcharts, and more.
@@ -47,7 +47,7 @@
 ### Connect Nodes via Ports
 Drag live-tracking preview beams between ports with automatic type and direction checking.
 <p align="center">
-  <img src="doc/connect.gif" alt="GraphFlow Node Connections" width="800">
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/connect.gif?raw=true" alt="GraphFlow Node Connections" width="800">
 </p>
 
 ### Smooth Zoom & Pan
@@ -59,7 +59,7 @@ Navigate massive workspaces effortlessly with infinite-feel grid scaling and mar
 ### Build Complex Networks
 Connect nodes with custom routing rules to build full visual pipelines.
 <p align="center">
-  <img src="doc/connect.gif" alt="GraphFlow Complex Networks" width="800">
+  <img src="https://github.com/NoirsCodingCorner/graph_flow/blob/master/doc/big_network.gif?raw=true" alt="GraphFlow Node Connections" width="800">
 </p>
 
 ---
