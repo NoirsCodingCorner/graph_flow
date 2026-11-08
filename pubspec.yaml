@@ -1,6 +1,6 @@
 name: graph_flow
-description: "Performant highly customizable node editor engine"
-version: 1.0.2
+description: "Performant highly customizable node editor engine. Does allow the building of unique node editors for professional projects."
+version: 1.0.3
 homepage: "https://github.com/NoirsCodingCorner/graph_flow"
 
 

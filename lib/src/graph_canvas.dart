@@ -34,6 +34,7 @@ class GraphCanvas extends StatefulWidget {
 class _GraphCanvasState extends State<GraphCanvas>
     with SingleTickerProviderStateMixin {
   ValueNotifier<bool> canPan = ValueNotifier(true);
+  Size _viewportSize = Size.zero;
 
   final TransformationController _transformationController =
       TransformationController();
@@ -53,12 +54,22 @@ class _GraphCanvasState extends State<GraphCanvas>
   @override
   void initState() {
     super.initState();
+
+    widget.visualiser.spawnPositionBuilder = () {
+      final viewportCenter = Offset(
+        _viewportSize.width / 2,
+        _viewportSize.height / 2,
+      );
+
+      final inverse = Matrix4.copy(_transformationController.value)..invert();
+      return MatrixUtils.transformPoint(inverse, viewportCenter);
+    };
+
     _dotController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     )..repeat();
   }
-
 
   @override
   void dispose() {
@@ -68,161 +79,169 @@ class _GraphCanvasState extends State<GraphCanvas>
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Focus(
-        focusNode: _focusNode,
-        autofocus: true,
-        onKeyEvent: (node, event) {
-          if (event is KeyDownEvent &&
-              (event.logicalKey == LogicalKeyboardKey.delete ||
-                  event.logicalKey == LogicalKeyboardKey.backspace)) {
-            widget.visualiser.deleteSelectedNodes();
-            return KeyEventResult.handled;
-          }
-          return KeyEventResult.ignored;
-        },
-        child: ListenableBuilder(
-      listenable: widget.visualiser,
-      builder: (context, _) {
-        return Container(
-          color: widget.canvasLayout.gridBackgroundColor,
-          child: ValueListenableBuilder(
-            valueListenable: canPan,
-            builder: (context, pan, child) {
-              List<NodeViewState> sortedNodes =
-                  widget.visualiser.nodeViewStates.values.toList();
-              sortedNodes.sort((NodeViewState a, NodeViewState b) {
-                return a.paintOrder.compareTo(b.paintOrder);
-              });
+    return LayoutBuilder(builder: (context, constraints) {
+      _viewportSize = constraints.biggest;
+      return Focus(
+          focusNode: _focusNode,
+          autofocus: true,
+          onKeyEvent: (node, event) {
+            if (event is KeyDownEvent &&
+                (event.logicalKey == LogicalKeyboardKey.delete ||
+                    event.logicalKey == LogicalKeyboardKey.backspace)) {
+              widget.visualiser.deleteSelectedNodes();
+              return KeyEventResult.handled;
+            }
+            return KeyEventResult.ignored;
+          },
+          child: ListenableBuilder(
+            listenable: widget.visualiser,
+            builder: (context, _) {
+              return Container(
+                color: widget.canvasLayout.gridBackgroundColor,
+                child: ValueListenableBuilder(
+                  valueListenable: canPan,
+                  builder: (context, pan, child) {
+                    List<NodeViewState> sortedNodes =
+                        widget.visualiser.nodeViewStates.values.toList();
+                    sortedNodes.sort((NodeViewState a, NodeViewState b) {
+                      return a.paintOrder.compareTo(b.paintOrder);
+                    });
 
-              List<Widget> nodeWidgets = [];
-              for (int i = 0; i < sortedNodes.length; i++) {
-                NodeViewState nodeState = sortedNodes[i];
-                Widget nodeWidget = NodeVisual(
-                  key: ValueKey(nodeState.model.id),
-                  nodeViewState: nodeState,
-                  graphVisualizer: widget.visualiser,
-                  builder: widget.visualiser
-                      .getNodeBuilderByType(nodeState.model.typeName)!,
-                );
-                nodeWidgets.add(nodeWidget);
-              }
-
-              return InteractiveViewer(
-                panEnabled: pan,
-                transformationController: _transformationController,
-                constrained: false,
-                boundaryMargin: const EdgeInsets.all(0),
-                minScale: widget.canvasLayout.minScale,
-                maxScale: widget.canvasLayout.maxScale,
-                scaleFactor: widget.canvasLayout.scaleFactor,
-                child: Listener(
-                  onPointerDown: (details) {
-                    _focusNode.requestFocus();
-                    if (HardwareKeyboard.instance.isShiftPressed) {
-                      widget.visualiser.startMarquee(details.localPosition);
-                      canPan.value = false;
+                    List<Widget> nodeWidgets = [];
+                    for (int i = 0; i < sortedNodes.length; i++) {
+                      NodeViewState nodeState = sortedNodes[i];
+                      Widget nodeWidget = NodeVisual(
+                        key: ValueKey(nodeState.model.id),
+                        nodeViewState: nodeState,
+                        graphVisualizer: widget.visualiser,
+                        builder: widget.visualiser
+                            .getNodeBuilderByType(nodeState.model.typeName)!,
+                      );
+                      nodeWidgets.add(nodeWidget);
                     }
-                    if (details.buttons == kSecondaryButton) {
-                      widget.visualiser.selectedNodes.value = [];
-                    }
-                  },
-                  onPointerMove: (details) {
-                    if (HardwareKeyboard.instance.isShiftPressed) {
-                      // currentMarquee internally handles logic and listener notification
-                      widget.visualiser.currentMarquee(details.localPosition);
-                    }
-                  },
-                  onPointerUp: (details) {
-                    widget.visualiser.endMarquee();
-                    canPan.value = true;
-                  },
-                  child: MouseRegion(
-                    onHover: (event) {
-                      widget.visualiser
-                          .updateMousePosition(event.localPosition);
-                    },
-                    child: SizedBox(
-                      width: widget.canvasLayout.canvasWidth,
-                      height: widget.canvasLayout.canvasHeight,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned.fill(
-                            child: IgnorePointer(
-                              child: GridWidget(
-                                gridSpacing: widget.canvasLayout.gridSpacing,
-                                lineColor: widget.canvasLayout.gridLineColor,
-                                backgroundColor:
-                                    widget.canvasLayout.gridBackgroundColor,
-                                lineWidth: 0.2,
-                              ),
-                            ),
-                          ),
 
-                          // Dynamically build NodeVisuals from the visualiser's state
-                          ...nodeWidgets,
-
-                          IgnorePointer(
-                            child: CustomPaint(
-                              size: Size(widget.canvasLayout.canvasWidth,
-                                  widget.canvasLayout.canvasHeight),
-                              painter: DataConnectionPainter(
-                                widget.visualiser,
-                                _dotController,
-                                lineColor:
-                                    widget.canvasLayout.connectionLineColor,
-                                lineColorShadow: widget
-                                    .canvasLayout.connectionLineColorShadow,
-                                dotColor:
-                                    widget.canvasLayout.connectionDotColor,
-                                dotColorShadow: widget
-                                    .canvasLayout.connectionDotColorShadow,
-                                highLightColor:
-                                    widget.canvasLayout.highLightColor,
-                                enableAnimation: widget
-                                    .canvasLayout.connectionEnableAnimation,
-                                enableLineGlow: widget
-                                    .canvasLayout.connectionEnableLineGlow,
-                                enableDotGlow:
-                                    widget.canvasLayout.connectionEnableDotGlow,
-                                connectionShape:
-                                    widget.canvasLayout.connectionShape,
-                              ),
-                            ),
-                          ),
-
-                          if (widget.visualiser.marqueeStartPosition != null &&
-                              widget.visualiser.marqueeEndPosition != null)
-                            Positioned.fromRect(
-                              rect: _calculateRect(
-                                  widget.visualiser.marqueeStartPosition!,
-                                  widget.visualiser.marqueeEndPosition!),
-                              child: IgnorePointer(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.withValues(alpha: 0.15),
-                                    border: Border.all(
-                                      color: Colors.blueAccent,
-                                      width: 1.5,
+                    return InteractiveViewer(
+                      panEnabled: pan,
+                      transformationController: _transformationController,
+                      constrained: false,
+                      boundaryMargin: const EdgeInsets.all(0),
+                      minScale: widget.canvasLayout.minScale,
+                      maxScale: widget.canvasLayout.maxScale,
+                      scaleFactor: widget.canvasLayout.scaleFactor,
+                      child: Listener(
+                        onPointerDown: (details) {
+                          _focusNode.requestFocus();
+                          if (HardwareKeyboard.instance.isShiftPressed) {
+                            widget.visualiser
+                                .startMarquee(details.localPosition);
+                            canPan.value = false;
+                          }
+                          if (details.buttons == kSecondaryButton) {
+                            widget.visualiser.selectedNodes.value = [];
+                          }
+                        },
+                        onPointerMove: (details) {
+                          if (HardwareKeyboard.instance.isShiftPressed) {
+                            // currentMarquee internally handles logic and listener notification
+                            widget.visualiser
+                                .currentMarquee(details.localPosition);
+                          }
+                        },
+                        onPointerUp: (details) {
+                          widget.visualiser.endMarquee();
+                          canPan.value = true;
+                        },
+                        child: MouseRegion(
+                          onHover: (event) {
+                            widget.visualiser
+                                .updateMousePosition(event.localPosition);
+                          },
+                          child: SizedBox(
+                            width: widget.canvasLayout.canvasWidth,
+                            height: widget.canvasLayout.canvasHeight,
+                            child: Stack(
+                              clipBehavior: Clip.none,
+                              children: [
+                                Positioned.fill(
+                                  child: IgnorePointer(
+                                    child: GridWidget(
+                                      gridSpacing:
+                                          widget.canvasLayout.gridSpacing,
+                                      lineColor:
+                                          widget.canvasLayout.gridLineColor,
+                                      backgroundColor: widget
+                                          .canvasLayout.gridBackgroundColor,
+                                      lineWidth: 0.2,
                                     ),
                                   ),
                                 ),
-                              ),
+
+                                // Dynamically build NodeVisuals from the visualiser's state
+                                ...nodeWidgets,
+
+                                IgnorePointer(
+                                  child: CustomPaint(
+                                    size: Size(widget.canvasLayout.canvasWidth,
+                                        widget.canvasLayout.canvasHeight),
+                                    painter: DataConnectionPainter(
+                                      widget.visualiser,
+                                      _dotController,
+                                      lineColor: widget
+                                          .canvasLayout.connectionLineColor,
+                                      lineColorShadow: widget.canvasLayout
+                                          .connectionLineColorShadow,
+                                      dotColor: widget
+                                          .canvasLayout.connectionDotColor,
+                                      dotColorShadow: widget.canvasLayout
+                                          .connectionDotColorShadow,
+                                      highLightColor:
+                                          widget.canvasLayout.highLightColor,
+                                      enableAnimation: widget.canvasLayout
+                                          .connectionEnableAnimation,
+                                      enableLineGlow: widget.canvasLayout
+                                          .connectionEnableLineGlow,
+                                      enableDotGlow: widget
+                                          .canvasLayout.connectionEnableDotGlow,
+                                      connectionShape:
+                                          widget.canvasLayout.connectionShape,
+                                    ),
+                                  ),
+                                ),
+
+                                if (widget.visualiser.marqueeStartPosition !=
+                                        null &&
+                                    widget.visualiser.marqueeEndPosition !=
+                                        null)
+                                  Positioned.fromRect(
+                                    rect: _calculateRect(
+                                        widget.visualiser.marqueeStartPosition!,
+                                        widget.visualiser.marqueeEndPosition!),
+                                    child: IgnorePointer(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue
+                                              .withValues(alpha: 0.15),
+                                          border: Border.all(
+                                            color: Colors.blueAccent,
+                                            width: 1.5,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
               );
             },
-          ),
-        );
-      },
-    ))
-    ;
+          ));
+    });
   }
 }

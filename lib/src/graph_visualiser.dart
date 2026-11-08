@@ -32,6 +32,10 @@ class GraphVisualiser extends ChangeNotifier {
   Offset? marqueeStartPosition;
   Offset? marqueeEndPosition;
 
+  /// Function to handle canvas offset in order to spawn new nodes here
+  Offset Function()? spawnPositionBuilder;
+  Offset _newNodePosition() => spawnPositionBuilder?.call() ?? const Offset(0, 0);
+
   /// Building method to be used for each Node that gets build.
   Map<
       String,
@@ -70,7 +74,7 @@ class GraphVisualiser extends ChangeNotifier {
       bool exists = nodeViewStates.containsKey(nodeModel.id);
 
       if (exists == false) {
-        NodeViewState newState = NodeViewState(nodeModel, const Offset(0, 0));
+        NodeViewState newState = NodeViewState(nodeModel, _newNodePosition());
         nodeViewStates[nodeModel.id] = newState;
       }
     }

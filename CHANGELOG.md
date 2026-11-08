@@ -16,3 +16,6 @@
 
 ## 1.0.2
 * Added deletion from canvas
+
+## 1.0.3
+* Added positioned spwning of nodes in the canvas
