@@ -16,9 +16,17 @@ class GraphModel extends ChangeNotifier {
 
   GraphModel({this.allowedConnections = const {}});
 
-  /// Adds a [NodeModel] to the graph and notifies listeners.
+  /// Adds a [NodeModel] to the graph and notifies its listeners.
   void addNode(NodeModel model) {
     nodeModels.add(model);
+    notifyListeners();
+  }
+
+  /// Removes a [NodeModel], all its connections and notifies its listeners.
+  void removeNode(NodeModel node) {
+    nodeModels.removeWhere((n) => n.id == node.id);
+    connectionModels.removeWhere((c) =>
+    c.sourceNodeId == node.id || c.targetNodeId == node.id);
     notifyListeners();
   }
 

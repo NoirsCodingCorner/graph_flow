@@ -39,6 +39,7 @@ class _GraphCanvasState extends State<GraphCanvas>
       TransformationController();
 
   late AnimationController _dotController;
+  final FocusNode _focusNode = FocusNode();
 
   Rect _calculateRect(Offset a, Offset b) {
     return Rect.fromLTRB(
@@ -58,16 +59,31 @@ class _GraphCanvasState extends State<GraphCanvas>
     )..repeat();
   }
 
+
   @override
   void dispose() {
+    _focusNode.dispose();
     _dotController.dispose();
     _transformationController.dispose();
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
+    return Focus(
+        focusNode: _focusNode,
+        autofocus: true,
+        onKeyEvent: (node, event) {
+          if (event is KeyDownEvent &&
+              (event.logicalKey == LogicalKeyboardKey.delete ||
+                  event.logicalKey == LogicalKeyboardKey.backspace)) {
+            widget.visualiser.deleteSelectedNodes();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: ListenableBuilder(
       listenable: widget.visualiser,
       builder: (context, _) {
         return Container(
@@ -104,6 +120,7 @@ class _GraphCanvasState extends State<GraphCanvas>
                 scaleFactor: widget.canvasLayout.scaleFactor,
                 child: Listener(
                   onPointerDown: (details) {
+                    _focusNode.requestFocus();
                     if (HardwareKeyboard.instance.isShiftPressed) {
                       widget.visualiser.startMarquee(details.localPosition);
                       canPan.value = false;
@@ -205,6 +222,7 @@ class _GraphCanvasState extends State<GraphCanvas>
           ),
         );
       },
-    );
+    ))
+    ;
   }
 }

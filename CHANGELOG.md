@@ -13,3 +13,6 @@
 
 ## 1.0.1
 * Url fix applied to not loaded doc images
+
+## 1.0.2
+* Added deletion from canvas

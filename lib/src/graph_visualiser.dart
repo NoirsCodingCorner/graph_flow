@@ -221,6 +221,19 @@ class GraphVisualiser extends ChangeNotifier {
     }
   }
 
+  void deleteSelectedNodes() {
+    final selected = List<NodeViewState>.from(selectedNodes.value);
+    if (selected.isEmpty) return;
+
+    selectedNodes.value = [];
+
+    for (final node in selected) {
+      model.removeNode(node.model);
+    }
+
+    notifyListeners();
+  }
+
   /// Serialises the node layout to a Json map.
   ///
   /// The result maps each node id to its position, e.g.
