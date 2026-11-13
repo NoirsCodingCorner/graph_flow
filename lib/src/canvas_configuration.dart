@@ -1,5 +1,7 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:graph_flow/graph_flow.dart';
-import 'package:material_ui/material_ui.dart';
 
 /// Configuration of how a [GraphCanvas] should render Connections and its background.
 /// Is used for [GraphCanvas] as its drawing style and does not affect how Nodes or Ports are drawn.
