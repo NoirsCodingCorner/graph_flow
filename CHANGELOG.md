@@ -19,3 +19,6 @@
 
 ## 1.0.3
 * Added positioned spwning of nodes in the canvas
+
+## 1.0.4
+* Converted to support dart 3.6.0 and upwards
